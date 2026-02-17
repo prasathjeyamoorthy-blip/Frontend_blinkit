@@ -4,6 +4,9 @@
   max-width: 1410px;
   margin-left: 55px;
   padding: 0 20px;
+  /* Keep same desktop alignment, but avoid overflow on zoom/smaller viewports */
+  width: calc(100% - 110px);
+  margin-right: 55px;
 }
 
 /* ================= HERO ================= */
@@ -98,6 +101,13 @@
 /* ================= RESPONSIVE ================= */
 
 @media (max-width: 992px) {
+  .container {
+    width: calc(100% - 32px);
+    margin-left: 16px;
+    margin-right: 16px;
+    padding: 0;
+  }
+
   .hero {
     padding: 40px;
     height: auto;

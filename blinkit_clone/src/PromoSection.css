@@ -2,6 +2,9 @@
   max-width: 1280px;
   margin: 60px 0px 0px 45px;   /* centered properly */
   padding: 0 1.5rem;
+  /* Avoid horizontal overflow when zoom reduces viewport */
+  width: calc(100% - 90px);
+  margin-right: 45px;
 
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));

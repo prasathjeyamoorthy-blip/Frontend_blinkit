@@ -1,6 +1,8 @@
 .category-container {
-  width: 1410px;
+  width: calc(100% - 90px);
+  max-width: 1410px;
   margin: 50px 0px 0px 45px;
+  margin-right: 45px;
   padding: 0 20px;
 
   display: grid;
@@ -56,5 +58,12 @@
 @media (max-width: 768px) {
   .category-container {
     grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* Inline `marginRight: 300px` in JSX can cause overflow on zoom */
+@media (max-width: 1800px) {
+  .category-container {
+    margin-right: 45px !important;
   }
 }

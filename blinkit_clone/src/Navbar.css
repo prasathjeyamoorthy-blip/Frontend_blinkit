@@ -18,6 +18,7 @@
   display: flex;
   align-items: center;
   height: 100px;
+  width: 100%;
 }
 
 /* Logo */
@@ -95,6 +96,10 @@
   height: 57px;
   overflow: hidden;
   margin-left: 40px;
+  /* Allow shrinking when zoom reduces available width */
+  max-width: 650px;
+  flex: 1 1 650px;
+  min-width: 240px;
 }
 
 .search-icon {
@@ -264,6 +269,7 @@
   display: flex;
   align-items: center;
   gap: 25px;
+  flex: 0 0 auto;
 }
 
 /* Login Button */
@@ -321,4 +327,62 @@
 
 .cart-btn.disabled:hover .cart-tooltip {
   opacity: 1;
+}
+
+/* ====== ZOOM / SMALLER VIEWPORT STABILITY (layout only) ====== */
+@media (max-width: 1200px) {
+  .nav-content {
+    flex-wrap: wrap;
+    height: auto;
+    padding: 12px 16px;
+    row-gap: 12px;
+  }
+
+  .divider-vertical {
+    display: none;
+  }
+
+  .location-trigger {
+    margin-left: 16px;
+  }
+
+  .search-container {
+    width: auto;
+    margin-left: 16px;
+    flex: 1 1 420px;
+    min-width: 220px;
+  }
+
+  .right-section {
+    width: 100%;
+    justify-content: flex-end;
+    gap: 16px;
+  }
+
+  .login-btn {
+    margin-right: 0;
+  }
+
+  .cart-btn {
+    margin-right: 0;
+  }
+}
+
+@media (max-width: 720px) {
+  .logo {
+    font-size: 36px;
+    margin-left: 0;
+    margin-right: 12px;
+  }
+
+  .location-trigger {
+    margin-left: 0;
+  }
+
+  .location-overlay {
+    left: 16px;
+    right: 16px;
+    width: auto;
+    max-width: calc(100vw - 32px);
+  }
 }

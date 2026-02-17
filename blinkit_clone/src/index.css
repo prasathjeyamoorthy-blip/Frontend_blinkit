@@ -12,4 +12,7 @@ body {
   margin: 0;
   font-family: "Inter", sans-serif;
   background: #f3f4f6;
+  /* Prevent horizontal UI “breaks” on browser zoom (overflow/scrollbar jitter) */
+  overflow-x: hidden;
+  overflow-x: clip;
 }
