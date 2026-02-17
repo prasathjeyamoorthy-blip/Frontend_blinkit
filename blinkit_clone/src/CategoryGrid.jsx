@@ -5,7 +5,7 @@ import { categories } from "./data/categories.js";
 
 const CategoryGrid = () => {
   return (
-    <div className="category-container" style={{ marginRight: "196px" }}>
+    <div className="category-container" style={{ marginRight: "300px" }}>
       {categories.map((item, index) => (
         <div key={index} className="category-card">
           <div className="category-image">

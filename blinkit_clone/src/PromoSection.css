@@ -1,64 +1,95 @@
 .promo-container {
   max-width: 1280px;
-  margin: 64px 0px 0px 47px;
-  padding: 0 20px;
+  margin: 60px 0px 0px 45px;   /* centered properly */
+  padding: 0 1.5rem;
+
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 24px;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 1.5rem;
 }
 
+/* Card */
 .promo-card {
   position: relative;
-  height: 240px;
-  border-radius: 20px;
+  border-radius: 1.25rem;
   overflow: hidden;
 
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
 
-  display: flex;
-  align-items: center;
-  padding: 30px;
+  min-height: 15rem;     /* instead of fixed height */
+  padding: 2rem;
 
+  display: flex;
   font-family: "Inter", sans-serif;
 }
 
-/* Optional slight dark fade for readability */
+/* Gradient fade */
 .promo-card::before {
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(90deg, rgba(0, 0, 0, 0.35), transparent 60%);
+  background: linear-gradient(
+    90deg,
+    rgba(0, 0, 0, 0.35),
+    transparent 60%
+  );
 }
 
+/* Content */
 .promo-content {
   position: relative;
   z-index: 2;
   max-width: 60%;
   color: #ffffff;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.75rem;
 }
 
+/* Alignment variations */
+
+.left-align {
+  align-items: center;
+}
+
+.center-align {
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.bottom-align {
+  align-items: flex-end;
+}
+
+.bottom-align .promo-content {
+  align-self: flex-start;
+}
+
+/* Typography */
+
 .promo-content h3 {
-  font-size: 22px;
+  font-size: clamp(1.2rem, 1.8vw, 1.4rem);
   font-weight: 700;
-  margin-bottom: 12px;
   line-height: 1.3;
 }
 
 .promo-content p {
-  font-size: 14px;
-  margin-bottom: 18px;
+  font-size: 0.9rem;
   opacity: 0.95;
 }
 
-/* Buttons */
+/* Button */
 
 .promo-btn {
   border: none;
-  padding: 10px 22px;
-  border-radius: 12px;
-  font-size: 14px;
+  padding: 0.65rem 1.4rem;
+  border-radius: 0.75rem;
+  font-size: 0.9rem;
   font-weight: 600;
   cursor: pointer;
 }
@@ -74,12 +105,9 @@
 }
 
 /* Responsive */
-@media (max-width: 992px) {
-  .promo-container {
-    grid-template-columns: 1fr;
-  }
 
+@media (max-width: 992px) {
   .promo-content {
-    max-width: 80%;
+    max-width: 75%;
   }
 }

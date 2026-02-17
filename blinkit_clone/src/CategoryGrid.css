@@ -1,6 +1,6 @@
 .category-container {
-  max-width: 1280px;
-  margin: 50px auto;
+  width: 1600px;
+  margin: 50px 0px 0px 40px;
   padding: 0 20px;
 
   display: grid;
