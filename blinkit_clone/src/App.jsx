@@ -4,6 +4,8 @@ import viteLogo from "/vite.svg";
 import "./App.css";
 import Navbar from "./Navbar";
 import Hero from "./Hero.jsx";
+import PromoSection from "./PromoSection.jsx";
+import CategoryGrid from "./CategoryGrid.jsx";
 
 function App() {
   const [count, setCount] = useState(0);
@@ -12,6 +14,8 @@ function App() {
     <>
       <Navbar />
       <Hero />
+      <PromoSection />
+      <CategoryGrid />
     </>
   );
 }
