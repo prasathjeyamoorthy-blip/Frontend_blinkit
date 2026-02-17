@@ -1,0 +1,109 @@
+/* ================= CONTAINER ================= */
+
+.container {
+  max-width: 1170px;
+  margin-left: 45px;
+  padding: 0 20px;
+}
+
+/* ================= HERO ================= */
+
+.hero {
+  position: relative;
+  height: 320px;
+  border-radius: 10px;
+  margin-top: 16px;
+  overflow: hidden;
+
+  display: flex;
+  align-items: center;
+
+  padding: 0 40px;
+  max-height: 225px;
+  background-size: cover;
+  background-position: right center;
+  background-repeat: no-repeat;
+}
+
+/* Gradient overlay */
+.hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+
+  background: linear-gradient(
+    90deg,
+    rgba(46, 125, 50, 0.95) 0%,
+    rgba(46, 125, 50, 0.85) 40%,
+    rgba(46, 125, 50, 0.45) 65%,
+    transparent 85%
+  );
+
+  z-index: 1;
+}
+
+/* ================= TEXT CONTENT ================= */
+
+.hero-content {
+  position: relative;
+  z-index: 2;
+  max-width: 620px;
+  color: #ffffff;
+}
+
+/* Heading styling (matched to screenshot) */
+.hero-content h1 {
+  font-size: 44px;
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: -0.5px;
+  margin-bottom: 12px;
+  color: #ffffff;
+}
+
+/* Paragraph styling */
+.hero-content p {
+  font-size: 24px;
+  font-weight: 400;
+  line-height: 1.4; /* tighter */
+  margin-bottom: 20px;
+}
+
+/* ================= BUTTON ================= */
+
+.hero-btn {
+  background: white; /* soft grey like screenshot */
+  color: #2e2e2e; /* dark grey text */
+
+  border: none;
+  padding: 8px 5px; /* more breathing space */
+  font-size: 19px; /* slightly smaller */
+  font-weight: 600;
+  height: 40px;
+  width: 111px;
+
+  border-radius: 7px; /* softer corners */
+  cursor: pointer;
+
+  font-family: "Inter", sans-serif;
+  letter-spacing: 0; /* remove spacing */
+
+  transition: all 0.2s ease;
+}
+
+.hero-btn:hover {
+  background: #dcdcdc; /* subtle hover */
+}
+
+/* ================= RESPONSIVE ================= */
+
+@media (max-width: 992px) {
+  .hero {
+    padding: 40px;
+    height: auto;
+  }
+
+  .hero-content h1 {
+    font-size: 34px;
+  }
+}
