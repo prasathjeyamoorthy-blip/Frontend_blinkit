@@ -9,9 +9,10 @@
 .navbar {
   position: sticky;
   top: 0;
+  z-index: 1000;
   background: #ffffff;
   border-bottom: 1px solid #e5e5e5;
-  z-index: 100;
+  width: 100%;
 }
 
 .nav-content {
@@ -19,6 +20,7 @@
   align-items: center;
   height: 100px;
   width: 100%;
+  position : relative;
 }
 
 /* Logo */
@@ -282,23 +284,22 @@
   font-size: 19px;
   cursor: pointer;
   letter-spacing: 0.8px;
-  margin-right: 50px;
+  margin: 0px 20px 0px 30px;
 }
 
 /* Cart Button */
 .cart-btn {
   display: flex;
   position: relative;
-  padding: 10px 20px;
   margin-right: 40px;
-  background-color: #d1d5db;
-  color: #ffffff;
-  opacity: 0.7;
+  background-color: #15803d;
+  color: white;
   border-radius: 8px;
   font-weight: 500;
   cursor: pointer;
   transition: 0.3s ease;
-  width: 130px;
+  min-width: 160px;
+  padding: 12px 20px;
   height: 60px;
 }
 
@@ -385,4 +386,374 @@
     width: auto;
     max-width: calc(100vw - 32px);
   }
+}
+
+/* Login Modal Backdrop */
+.login-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+/* Modal Box */
+.login-modal {
+  background: #ffffff;
+  padding: 40px;
+  border-radius: 20px;
+  width: 420px;
+  text-align: center;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+  animation: fadeIn 0.3s ease;
+}
+
+/* Phone Input Box */
+.phone-box {
+  display: flex;
+  align-items: center;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  padding: 12px;
+  margin: 20px 0;
+  background: #fafafa;
+}
+
+.phone-box span {
+  margin-right: 10px;
+  font-weight: 600;
+  color: #555;
+}
+
+.phone-box input {
+  border: none;
+  outline: none;
+  width: 100%;
+  font-size: 14px;
+  background: transparent;
+}
+
+/* Continue Button */
+.login-modal button {
+  width: 100%;
+  padding: 14px;
+  background: #f7c948;
+  border: none;
+  border-radius: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.login-modal button:hover {
+  background: #f4b400;
+}
+
+/* Success UI */
+.success-box {
+  text-align: center;
+}
+
+.check {
+  background: #28a745;
+  color: white;
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  font-size: 34px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0 auto 15px;
+  animation: pop 0.3s ease;
+}
+
+/* Account Dropdown */
+.account-dropdown {
+  position: absolute;
+  top: 50px;
+  right: 0;
+  background: white;
+  width: 220px;
+  padding: 15px;
+  border-radius: 10px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  z-index: 999;
+}
+
+.account-dropdown p {
+  margin: 8px 0;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.account-wrapper {
+  position: relative;
+  cursor: pointer;
+  font-weight: 500;
+  margin-left: 40px;
+  margin-right: 20px;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes pop {
+  from {
+    transform: scale(0.7);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Dark overlay */
+.login-overlay {
+  min-height: 420px;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+  box-sizing: border-box;
+}
+
+/* Modal card */
+.login-card {
+  width: 600px;
+  min-height: 100px;
+  background: #ffffff;
+  border-radius: 18px;
+  padding: 19px 150px;
+  position: relative;
+  text-align: center;
+  animation: fadeIn 0.25s ease;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  box-sizing: border-box;
+}
+
+/* Back arrow */
+.login-back {
+  position: absolute;
+  left: 20px;
+  top: 20px;
+  cursor: pointer;
+  font-size: 22px;
+  color: #333;
+}
+
+/* Logo */
+.login-logo {
+  width: 68px;
+  height: 68px;
+  background: #f7c948;
+  border-radius: 20px;
+  margin: 0 auto 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 20px;
+  font-family: "Inter", sans-serif;
+  letter-spacing: -1.8px;
+}
+
+/* Title */
+.login-title {
+  font-family: "Inter", sans-serif;
+  font-size: 26px;
+  font-weight: 800;
+  color: #1f2937;
+  font-weight: 600;
+  margin: 0;
+  margin-bottom: 6px;
+  letter-spacing: -0.6px;
+}
+
+.login-sub {
+  font-family: "Inter", sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  color: black;
+  margin-bottom: 25px;
+  margin-top: 6px;
+  letter-spacing: 0.9px;
+  line-height: -100px;
+}
+
+/* Phone input */
+.login-input-box {
+  display: flex;
+  align-items: center;
+  border: 1px solid #ddd;
+  border-radius: 14px;
+  padding: 14px;
+  margin-bottom: 20px;
+}
+
+.login-input-box span {
+  margin-right: 10px;
+  font-weight: 500;
+  color: #333;
+}
+
+.login-input-box input {
+  border: none;
+  outline: none;
+  width: 100%;
+  font-size: 14px;
+}
+
+/* Continue button */
+.login-continue {
+  width: 100%;
+  padding: 14px;
+  border-radius: 14px;
+  border: none;
+  background: #cfcfcf;
+  color: #fff;
+  font-weight: 600;
+  cursor: not-allowed;
+  transition: 0.2s ease;
+}
+
+.login-continue.active {
+  background: #9e9e9e;
+  cursor: pointer;
+}
+
+.login-continue.active:hover {
+  background: #8b8b8b;
+}
+
+/* Terms */
+.login-terms {
+  font-size: 12px;
+  color: #777;
+  margin-top: 20px;
+}
+
+.login-terms span {
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+/* Animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.account-panel {
+  position: fixed;
+  top: 80px;
+  right: 40px;
+
+  width: 330px;
+  background: #ffffff;
+
+  border-radius: 20px;
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.08);
+
+  padding: 0;
+  z-index: 1001;
+}
+
+.account-header {
+  padding: 18px 22px 12px;
+  border-bottom: 1px solid #f1f1f1;
+}
+
+.account-title {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.account-number {
+  font-size: 13px;
+  color: #777;
+  margin-top: 4px;
+}
+
+.account-menu {
+  border-top: 1px solid #f1f1f1;
+  padding: 10px 0;
+}
+
+.account-item {
+  padding: 12px 22px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.account-item:hover {
+  background: #f5f5f5;
+}
+
+.logout {
+  color: #dc2626;
+}
+
+.account-qr {
+  display: flex;
+  gap: 15px;
+  padding: 20px 22px;
+  border-top: 1px solid #eee;
+}
+
+.account-qr img {
+  width: 90px;
+  height: 90px;
+}
+
+.qr-title {
+  font-weight: 600;
+  font-size: 14px;
+  margin: 0;
+}
+
+.qr-sub {
+  color: #2563eb;
+  font-weight: 600;
+  font-size: 14px;
+  margin: 2px 0;
+}
+
+.qr-desc {
+  font-size: 12px;
+  color: #6b7280;
+  margin-top: 4px;
+}
+
+.account-backdrop {
+  position: fixed;
+  top: 70px; /* height of navbar */
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: 500;
 }

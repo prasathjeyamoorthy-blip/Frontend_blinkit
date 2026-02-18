@@ -1,0 +1,577 @@
+.cart-drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 420px;
+  height: 100vh;
+  background: #f3f4f8;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+
+  overflow: visible; /* 🔥 IMPORTANT */
+}
+
+.cart-header {
+  background: white;
+  padding: 18px;
+  display: flex;
+  justify-content: space-between;
+  font-weight: 600;
+}
+
+.cart-scroll {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px;
+}
+
+.savings-banner {
+  background: #dbeafe;
+  padding: 12px 16px;
+  border-radius: 14px;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  color: #1d4ed8;
+  font-weight: 600;
+}
+
+.delivery-card,
+.bill-card,
+.tip-card {
+  background: #f3f4f6;
+  border-radius: 18px;
+  padding: 14px 16px; /* 🔥 slightly reduced padding */
+  margin-top: 14px;
+}
+
+.cancel-title {
+  font-family: "Inter", sans-serif;
+  font-size: 15px; /* 🔥 smaller */
+  font-weight: 600; /* not too bold */
+  letter-spacing: -0.2px; /* tighter */
+  margin: 0 0 6px 0;
+  color: #111827;
+}
+
+.donation-card,
+.cancel-card {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 16px;
+  margin-bottom: 16px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+.cancel-card {
+  margin-top: 16px;
+}
+
+.donation-card {
+  background: #ffffff !important;
+  border-radius: 16px;
+  padding: 16px;
+  margin-bottom: 16px;
+
+  border: 1px solid #e5e7eb; /* 🔥 gives separation */
+}
+
+.cancel-text {
+  font-family: "Inter", sans-serif;
+  font-size: 13.5px; /* slightly smaller */
+  font-weight: 400;
+  line-height: 1.45; /* tighter spacing */
+  color: #6b7280;
+  margin: 0;
+}
+
+.delivery-card {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.items-wrapper .item-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: white;
+  padding: 8px 10px;
+  border-radius: 12px;
+  margin-bottom: 8px;
+}
+
+.item-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 16px;
+}
+
+.item-card img {
+  width: 48px;
+  height: 48px;
+  border-radius: 10px;
+  background: #f3f4f6;
+  object-fit: contain;
+}
+
+.counter {
+  width: 80px; /* fixed width */
+  height: 35px; /* smaller height */
+  background: #15803d;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 5px;
+  color: white;
+  font-size: 13px;
+  margin-left: auto;
+  font-weight: 500;
+  box-sizing: border-box;
+  flex: none; /* 🚫 stop flex stretching */
+  flex-shrink: 0; /* 🚫 stop shrinking */
+}
+
+.counter button {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.counter span {
+  width: 20px; /* fixed space for number */
+  text-align: center;
+  font-weight: 600;
+  overflow: hidden; /* prevents expansion */
+  white-space: nowrap;
+  text-overflow: ellipsis; /* if number grows too big */
+}
+
+.bill-row {
+  display: flex;
+  justify-content: space-between;
+  margin: 8px 0;
+}
+
+.bill-row.grand {
+  font-weight: 700;
+}
+
+.free {
+  color: #15803d;
+  font-weight: 600;
+}
+
+.savings-small {
+  background: #dbeafe;
+  padding: 8px;
+  border-radius: 8px;
+  margin-top: 10px;
+  font-weight: 600;
+}
+
+.tip-options .active {
+  background: #15803d;
+  color: white;
+}
+
+.bottom-bar {
+  position: sticky;
+  bottom: 0;
+
+  background: #ffffff;
+  padding: 16px;
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.proceed-btn {
+  width: 100%;
+  height: 64px;
+
+  background: #15803d;
+  border: none;
+  border-radius: 16px;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  padding: 0 20px;
+  color: #ffffff;
+  cursor: pointer;
+}
+
+.proceed-btn:hover {
+  background: #166534; /* slightly darker green */
+}
+
+.total-section {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.total-amount {
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.total-label {
+  font-size: 12px;
+  font-weight: 500;
+  opacity: 0.9;
+}
+
+.proceed-text {
+  font-size: 18px;
+  font-weight: 100;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.arrow {
+  font-size: 20px;
+}
+
+.bottom-bar button {
+  background: #15803d;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.cart-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(2px);
+  z-index: 999;
+}
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+.cart-btn {
+  min-width: 150px;
+  height: 52px;
+  border-radius: 12px;
+  background: #e5e7eb;
+  color: #9ca3af;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-weight: 600;
+  cursor: default;
+  transition: all 0.2s ease;
+}
+
+.cart-btn.active {
+  background: #15803d;
+  color: white;
+  cursor: pointer;
+}
+
+.cart-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  line-height: 1.1;
+}
+
+.cart-info span {
+  font-size: 13px;
+}
+
+.cart-info strong {
+  font-size: 15px;
+}
+.item-info h4 {
+  font-size: 14px;
+  margin: 0;
+  font-weight: 600;
+}
+
+.item-info p {
+  font-size: 12px;
+  margin: 2px 0;
+  color: #6b7280;
+}
+
+.item-info strong {
+  font-size: 14px;
+}
+
+.bill-card {
+  background: #ffffff;
+  border-radius: 14px;
+  padding: 16px;
+  margin-top: 20px;
+}
+
+.bill-title {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+
+.bill-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 14px;
+}
+
+.bill-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: #374151;
+}
+
+.bill-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 500;
+}
+
+.strike {
+  text-decoration: line-through;
+  color: #9ca3af;
+  font-size: 14px;
+}
+
+.price {
+  font-weight: 600;
+}
+
+.free {
+  color: #16a34a;
+  font-weight: 600;
+}
+
+.saved-badge {
+  background: #e0f2fe;
+  color: #2563eb;
+  font-size: 12px;
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-weight: 500;
+}
+
+.bill-row.grand {
+  font-weight: 700;
+  font-size: 16px;
+  margin-top: 8px;
+}
+
+.donation-card {
+  background: #f3f4f6;
+  border-radius: 14px;
+  padding: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.donation-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.donation-img {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  object-fit: cover;
+}
+
+.donation-text h4 {
+  font-size: 15px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.donation-text p {
+  font-size: 13px;
+  color: #6b7280;
+  margin: 4px 0 0 0;
+}
+
+.read-more {
+  color: #16a34a;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.donation-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.donation-price {
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.donation-checkbox {
+  width: 18px;
+  height: 18px;
+  accent-color: #16a34a; /* makes checkbox green */
+  cursor: pointer;
+}
+.tip-card {
+  background: #ffffff;
+  border-radius: 14px;
+  padding: 16px;
+  margin-top: 20px;
+}
+
+.tip-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.tip-header h4 {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.tip-header p {
+  font-size: 13px;
+  color: #6b7280;
+  margin-top: 6px;
+  max-width: 260px;
+}
+
+.tip-amount {
+  text-align: right;
+  font-weight: 600;
+}
+
+.clear-tip {
+  display: block;
+  font-size: 13px;
+  color: #16a34a;
+  cursor: pointer;
+  margin-top: 4px;
+}
+
+.tip-options {
+  display: flex;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.tip-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+
+  padding: 6px 10px;
+  height: 45px;
+
+  border-radius: 10px; /* ← force pill */
+  border: 1px solid #e5e7eb;
+  background: #ffffff;
+
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.tip-btn img {
+  width: 15px;
+  height: 15px;
+}
+
+.tip-btn.active {
+  background: #eaf7ec; /* soft green background */
+  border: 1.5px solid #16a34a; /* green border */
+  color: #111827;
+}
+
+/* CUSTOM MODE */
+
+.custom-tip-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.custom-input {
+  flex: 1;
+  padding: 10px;
+  border: none;
+  border-bottom: 1px solid #d1d5db;
+  outline: none;
+  font-size: 14px;
+}
+
+.close-custom {
+  color: #6b7280;
+  cursor: pointer;
+  font-size: 14px;
+}
+.custom-tip-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 16px;
+}
+
+.custom-input {
+  flex: 1;
+  border: none;
+  border-bottom: 1px solid #d1d5db;
+  outline: none;
+  font-size: 14px;
+  padding: 6px 0;
+}
+
+.add-tip {
+  color: #16a34a;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.add-tip {
+  font-weight: 600;
+  cursor: pointer;
+  color: #16a34a; /* green for Add */
+}
+
+.add-tip.close-mode {
+  color: #9ca3af; /* soft grey */
+  font-weight: 500;
+}

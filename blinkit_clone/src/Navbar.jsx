@@ -2,9 +2,21 @@ import React, { useState, useEffect } from "react";
 import "./Navbar.css";
 import { FiSearch, FiShoppingCart } from "react-icons/fi";
 
-const Navbar = () => {
+const Navbar = ({
+  cartCount,
+  cartTotal,
+  openCart,
+  isLoggedIn,
+  setIsLoggedIn,
+  showLoginModal,
+  setShowLoginModal,
+  setShowCart, // ✅ NEW
+  cart, // ✅ NEW
+}) => {
   const [open, setOpen] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [phone, setPhone] = useState("");
+  const [loginSuccess, setLoginSuccess] = useState(false);
+  const [showAccountDropdown, setShowAccountDropdown] = useState(false);
 
   const suggestions = [
     "curd",
@@ -21,6 +33,7 @@ const Navbar = () => {
   const [index, setIndex] = useState(0);
   const [searchValue, setSearchValue] = useState("");
 
+  /* ---------------- SEARCH ANIMATION ---------------- */
   useEffect(() => {
     if (searchValue !== "") return;
 
@@ -31,11 +44,45 @@ const Navbar = () => {
     return () => clearInterval(interval);
   }, [searchValue]);
 
+  /* ---------------- CHECK LOGIN ---------------- */
+  useEffect(() => {
+    const saved = localStorage.getItem("blinkitUser");
+    if (saved) {
+      setIsLoggedIn(true);
+      setPhone(saved);
+    }
+  }, [setIsLoggedIn]);
+
+  const handleLogin = () => {
+    if (phone.length !== 10) return;
+
+    localStorage.setItem("blinkitUser", phone);
+    setIsLoggedIn(true);
+    setLoginSuccess(true);
+
+    setTimeout(() => {
+      setShowLoginModal(false);
+      setLoginSuccess(false);
+    }, 1200);
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem("blinkitUser");
+    setIsLoggedIn(false);
+    setShowAccountDropdown(false);
+  };
+  console.log("Login Setter:", setShowLoginModal);
+
+  /* ---------------- CART COUNT ---------------- */
+  const totalItems = Object.values(cart || {}).reduce(
+    (sum, qty) => sum + qty,
+    0,
+  );
+
   return (
     <>
       <nav className="navbar">
         <div className="nav-content">
-          {/* Logo */}
           <h1 className="logo">
             <span className="blink">blink</span>
             <span className="it">it</span>
@@ -43,7 +90,6 @@ const Navbar = () => {
 
           <div className="divider-vertical"></div>
 
-          {/* Location */}
           <div className="location-trigger" onClick={() => setOpen(true)}>
             <p className="delivery-text">Delivery in 8 minutes</p>
             <span className="select-location">
@@ -51,13 +97,11 @@ const Navbar = () => {
             </span>
           </div>
 
-          {/* Search */}
           <div className="search-container">
             <span className="search-icon">
               <FiSearch size={20} color="#111" />
             </span>
 
-            {/* Hide animation when typing */}
             {searchValue.length === 0 && (
               <div className="placeholder-mask">
                 <div
@@ -81,41 +125,124 @@ const Navbar = () => {
             />
           </div>
 
-          {/* Right Section */}
           <div className="right-section">
             {!isLoggedIn ? (
-              <button className="login-btn" onClick={() => setIsLoggedIn(true)}>
+              <button
+                className="login-btn"
+                onClick={() => setShowLoginModal(true)}
+              >
                 Login
               </button>
             ) : (
-              <span className="welcome-text">Hi, User</span>
+              <div
+                className="account-wrapper"
+                onClick={() => setShowAccountDropdown(!showAccountDropdown)}
+              >
+                Account ▼
+              </div>
             )}
 
+            {/* ---------------- CART BUTTON ---------------- */}
             <div
-              className={`cart-btn ${!isLoggedIn ? "disabled" : ""}`}
-              onClick={() => {
-                if (!isLoggedIn) return;
-                alert("Opening cart...");
-              }}
+              className={`cart-btn ${cartCount > 0 ? "active" : ""}`}
+              onClick={() => cartCount > 0 && openCart()}
             >
-              <FiShoppingCart size={20} style={{ marginTop: "8px" }} />
-              <span
-                style={{
-                  marginLeft: "10px",
-                  marginTop: "8px",
-                  fontFamily: "Inter, sans-serif",
-                }}
-              >
-                My Cart
-              </span>
+              <FiShoppingCart size={20} />
 
-              {!isLoggedIn && (
-                <span className="cart-tooltip">Login to access cart</span>
+              {cartCount > 0 ? (
+                <div className="cart-info">
+                  <span>{cartCount} items</span>
+                  <strong>₹{cartTotal}</strong>
+                </div>
+              ) : (
+                <span>My Cart</span>
               )}
             </div>
           </div>
         </div>
       </nav>
+
+      {/* ================= LOGIN MODAL ================= */}
+      {showLoginModal && (
+        <div className="login-overlay">
+          <div className="login-card">
+            <div
+              className="login-back"
+              onClick={() => setShowLoginModal(false)}
+            >
+              ←
+            </div>
+
+            {!loginSuccess ? (
+              <>
+                <div className="login-logo">
+                  <span style={{ color: "#111" }}>blink</span>
+                  <span style={{ color: "#16a34a" }}>it</span>
+                </div>
+
+                <h2 className="login-title">India's last minute app</h2>
+
+                <p className="login-sub">Log in or Sign up</p>
+
+                <div className="login-input-box">
+                  <span>+91</span>
+                  <input
+                    value={phone}
+                    onChange={(e) =>
+                      setPhone(e.target.value.replace(/\D/g, "").slice(0, 10))
+                    }
+                    placeholder="Enter mobile number"
+                  />
+                </div>
+
+                <button
+                  className={`login-continue ${
+                    phone.length === 10 ? "active" : ""
+                  }`}
+                  onClick={handleLogin}
+                >
+                  Continue
+                </button>
+              </>
+            ) : (
+              <div className="success-box">
+                <div className="check">✓</div>
+                <p>Successfully logged in!</p>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* ================= ACCOUNT DROPDOWN ================= */}
+      {showAccountDropdown && (
+        <>
+          <div
+            className="account-backdrop"
+            onClick={() => setShowAccountDropdown(false)}
+          />
+
+          <div className="account-panel">
+            <div className="account-header">
+              <p className="account-title">My Account</p>
+              <p className="account-number">{phone}</p>
+            </div>
+
+            <div className="account-menu">
+              <div className="account-item">My Orders</div>
+              <div className="account-item">Saved Addresses</div>
+              <div className="account-item">My Prescriptions</div>
+              <div className="account-item">E-Gift Cards</div>
+              <div className="account-item">FAQ's</div>
+              <div className="account-item">Account Privacy</div>
+              <div className="account-item logout" onClick={handleLogout}>
+                Log Out
+              </div>
+            </div>
+          </div>
+        </>
+      )}
+
       {/* Overlay */}
       {open && (
         <>
