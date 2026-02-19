@@ -7,6 +7,7 @@ import ProductSection from "./ProductSection";
 import CartDrawer from "./CartDrawer.jsx";
 import Footer from "./Footer";
 import { useEffect } from "react";
+import AddressDrawer from "./AddressDrawer";
 
 import { products } from "./data/products";
 
@@ -16,6 +17,7 @@ function App() {
   const [showLogin, setShowLogin] = useState(false);
   const [showCart, setShowCart] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
+  const [showAddress, setShowAddress] = useState(false);
 
   const totalItems = Object.values(cart).reduce((sum, qty) => sum + qty, 0);
 
@@ -75,7 +77,11 @@ function App() {
             cart={cart}
             setCart={setCart}
             closeCart={() => setShowCart(false)}
+            openAddress={() => setShowAddress(true)}
           />
+          {showAddress && (
+            <AddressDrawer closeAddress={() => setShowAddress(false)} />
+          )}
         </>
       )}
 

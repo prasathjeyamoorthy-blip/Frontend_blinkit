@@ -1,0 +1,74 @@
+.address-drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 420px;
+  height: 100vh;
+  background: #f1f3f8;
+  z-index: 2000;
+  overflow-y: auto;
+}
+
+.address-header {
+  background: white;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 18px;
+  border-bottom: 1px solid #eee;
+  font-family: "Inter", sans-serif;
+}
+
+.address-header h2 {
+  margin: 0;
+  font-size: 17px; /* key change */
+  font-weight: 600; /* medium bold like image */
+  line-height: 1.2;
+  letter-spacing: -0.4px;
+}
+
+.back-btn {
+  font-size: 26px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.add-address {
+  margin: 16px;
+  background: white;
+  padding: 18px;
+  border-radius: 12px;
+  font-weight: 600;
+  color: #14853b;
+  letter-spacing: 0.4px;
+  font-size: 16px;
+}
+
+.saved-title {
+  margin: 16px;
+  color: #666;
+  font-size: 14px;
+}
+
+.address-card {
+  margin: 16px;
+  background: white;
+  border-radius: 12px;
+  padding: 16px;
+  display: flex;
+  gap: 12px;
+}
+
+.address-icon {
+  font-size: 22px;
+}
+
+.address-info h4 {
+  margin: 0;
+}
+
+.address-info p {
+  margin-top: 4px;
+  color: #666;
+  line-height: 1.4;
+}

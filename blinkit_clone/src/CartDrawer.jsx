@@ -3,7 +3,7 @@ import { products } from "./data/products";
 import "./CartDrawer.css";
 import { FiFileText, FiTruck, FiInfo, FiUser } from "react-icons/fi";
 
-const CartDrawer = ({ cart, setCart, closeCart }) => {
+const CartDrawer = ({ cart, setCart, closeCart, openAddress }) => {
   const tipOptions = [
     { amount: 20, image: "/20_tip.webp" },
     { amount: 30, image: "/30_tip.avif" },
@@ -68,7 +68,9 @@ const CartDrawer = ({ cart, setCart, closeCart }) => {
     <div className="cart-drawer">
       <div className="cart-header">
         <h2>My Cart</h2>
-        <span onClick={closeCart}>✕</span>
+        <span onClick={closeCart} style={{ cursor: "pointer" }}>
+          ✕
+        </span>
       </div>
 
       <div className="cart-scroll">
@@ -295,7 +297,7 @@ const CartDrawer = ({ cart, setCart, closeCart }) => {
 
       {/* Sticky Bottom */}
       <div className="bottom-bar">
-        <button className="proceed-btn">
+        <button className="proceed-btn" onClick={openAddress}>
           <div className="total-section">
             <span className="total-amount">₹{grandTotal}</span>
             <span className="total-label">TOTAL</span>
