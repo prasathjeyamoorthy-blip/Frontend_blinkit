@@ -79,10 +79,20 @@
   display: flex;
   align-items: center;
   gap: 5px;
+  min-width: 0;
+}
+
+.location-address-text {
+  display: block;
+  max-width: 280px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .arrow {
   font-size: 11px;
+  flex-shrink: 0;
 }
 
 /* ================= SEARCH BAR ================= */
@@ -203,6 +213,198 @@
   gap: 14px;
 }
 
+.overlay-content-column {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0;
+}
+
+.overlay-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-bottom: 4px;
+}
+
+.location-map-section {
+  margin-top: 16px;
+  width: 100%;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid #e5e7eb;
+  background: #fff;
+}
+
+.delivery-availability-badge {
+  padding: 10px 14px;
+  font-size: 13px;
+  font-weight: 500;
+  border-radius: 10px 10px 0 0;
+}
+
+.delivery-availability-badge.available {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.delivery-availability-badge.unavailable {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+/* Location confirmation card */
+.location-confirm-card {
+  margin-top: 16px;
+  padding: 20px;
+  background: #fff;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+}
+
+.location-confirm-icon {
+  font-size: 28px;
+  margin-bottom: 8px;
+}
+
+.location-confirm-title {
+  font-family: "Inter", sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  color: #1f2937;
+  margin: 0 0 10px 0;
+  line-height: 1.4;
+}
+
+.location-confirm-address {
+  font-size: 13px;
+  color: #4b5563;
+  line-height: 1.5;
+  margin: 0 0 12px 0;
+  word-break: break-word;
+}
+
+.location-confirm-badge {
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  margin-bottom: 16px;
+}
+
+.location-confirm-badge.available {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.location-confirm-badge.unavailable {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+.location-confirm-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.location-confirm-btn {
+  flex: 1;
+  min-width: 140px;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+  border: none;
+}
+
+.location-confirm-btn.primary {
+  background: #16a34a;
+  color: white;
+}
+
+.location-confirm-btn.primary:hover:not(:disabled) {
+  background: #15803d;
+}
+
+.location-confirm-btn.primary:disabled {
+  background: #9ca3af;
+  cursor: not-allowed;
+  opacity: 0.8;
+}
+
+.location-confirm-btn.secondary {
+  background: #f3f4f6;
+  color: #374151;
+}
+
+.location-confirm-btn.secondary:hover {
+  background: #e5e7eb;
+}
+
+.location-confirm-btn-full {
+  width: 100%;
+  min-width: 100%;
+}
+
+.location-map-wrap {
+  width: 100%;
+  height: 220px;
+}
+
+.location-map-wrap .location-map {
+  width: 100%;
+  height: 100%;
+  border-radius: 0 0 10px 10px;
+  z-index: 0;
+}
+
+/* MapLibre – user & store pins */
+.location-map-wrap .location-pin {
+  width: 32px;
+  height: 40px;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center bottom;
+}
+
+.location-map-wrap .location-pin.user-pin {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 40' width='24' height='40'%3E%3Cpath fill='%232563eb' stroke='%23fff' stroke-width='2' d='M12 0C5.4 0 0 5.4 0 12c0 9 12 28 12 28s12-19 12-28C24 5.4 18.6 0 12 0z'/%3E%3Ccircle fill='%23fff' cx='12' cy='12' r='4'/%3E%3C/svg%3E");
+  cursor: pointer;
+}
+
+.location-map-wrap .location-pin.store-pin {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #16a34a;
+  border: 3px solid #fff;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  background-image: none;
+}
+
+.location-map-wrap .location-popup {
+  font-family: "Inter", sans-serif;
+  padding: 4px 0;
+  min-width: 180px;
+}
+
+.location-map-wrap .location-popup strong {
+  display: block;
+  font-size: 13px;
+  color: #111;
+}
+
+.location-map-wrap .location-address {
+  margin: 6px 0 0 0;
+  font-size: 12px;
+  color: #4b5563;
+  line-height: 1.4;
+}
+
 /* Detect Button */
 .detect-btn {
   background: #15803d;
@@ -264,6 +466,46 @@
 
 .location-input:focus {
   border-color: #16a34a;
+}
+
+.location-search-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+  min-width: 0;
+}
+
+.location-search-row .location-input {
+  flex: 1;
+  min-width: 0;
+}
+
+.location-search-btn {
+  flex-shrink: 0;
+  background: #16a34a;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.location-search-btn:hover:not(:disabled) {
+  background: #15803d;
+}
+
+.location-search-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.location-error.search-err {
+  margin-top: 8px;
+  width: 100%;
 }
 
 .right-section {
@@ -380,11 +622,28 @@
     margin-left: 0;
   }
 
+  .location-address-text {
+    max-width: 180px;
+  }
+
   .location-overlay {
     left: 16px;
     right: 16px;
     width: auto;
     max-width: calc(100vw - 32px);
+  }
+
+  .location-confirm-card {
+    padding: 16px;
+  }
+
+  .location-confirm-actions {
+    flex-direction: column;
+  }
+
+  .location-confirm-btn {
+    min-width: 100%;
+    width: 100%;
   }
 }
 

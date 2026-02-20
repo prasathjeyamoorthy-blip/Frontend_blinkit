@@ -7,10 +7,12 @@ const ProductCard = ({
   setCart,
   isLoggedIn = false,
   openLoginModal,
+  deliveryDisplay,
 }) => {
   const count = cart[product.id] || 0;
-
-  console.log("ID:", product.id);
+  const deliveryText = deliveryDisplay
+    ? `${(deliveryDisplay.replace(/\D/g, "") || "8").trim() || "8"} MINS`
+    : product.delivery;
 
   const addItem = () => {
     setCart((prev) => ({
@@ -49,7 +51,7 @@ const ProductCard = ({
       <div className="top-section">
         <img src={product.image} alt={product.title} loading="lazy" />
 
-        <div className="delivery">⏱ {product.delivery}</div>
+        <div className="delivery">⏱ {deliveryText}</div>
 
         <h4>{product.title}</h4>
         <p>{product.quantity}</p>

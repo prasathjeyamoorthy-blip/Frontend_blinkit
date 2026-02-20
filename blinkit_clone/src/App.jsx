@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Navbar from "./Navbar";
 import Hero from "./Hero";
 import PromoSection from "./PromoSection";
@@ -6,10 +6,61 @@ import CategoryGrid from "./CategoryGrid";
 import ProductSection from "./ProductSection";
 import CartDrawer from "./CartDrawer.jsx";
 import Footer from "./Footer";
-import { useEffect } from "react";
 import AddressDrawer from "./AddressDrawer";
 
 import { products } from "./data/products";
+import { DELIVERY_ZONES } from "./data/deliveryZones";
+
+const DELIVERY_RADIUS_KM = 20; // Delivery available within this distance from nearest service point
+
+function haversineKm(lat1, lon1, lat2, lon2) {
+  const R = 6371;
+  const dLat = ((lat2 - lat1) * Math.PI) / 180;
+  const dLon = ((lon2 - lon1) * Math.PI) / 180;
+  const a =
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos((lat1 * Math.PI) / 180) *
+      Math.cos((lat2 * Math.PI) / 180) *
+      Math.sin(dLon / 2) ** 2;
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return R * c;
+}
+
+function getNearestWarehouse(lat, lng) {
+  let nearest = null;
+  let minDist = Infinity;
+  for (const w of DELIVERY_ZONES) {
+    const d = haversineKm(lat, lng, w.lat, w.lng);
+    if (d < minDist) {
+      minDist = d;
+      nearest = { ...w, distanceKm: d };
+    }
+  }
+  return nearest;
+}
+
+function getDeliveryMinutesFromCoords(lat, lng) {
+  const nearest = getNearestWarehouse(lat, lng);
+  if (!nearest) return 25;
+  const extra = Math.min(17, Math.round(nearest.distanceKm * 2));
+  return Math.max(8, Math.min(25, 8 + extra));
+}
+
+export function isDeliveryAvailable(lat, lng) {
+  const nearest = getNearestWarehouse(lat, lng);
+  return nearest ? nearest.distanceKm <= DELIVERY_RADIUS_KM : false;
+}
+
+export function getNearestStoreCoords(lat, lng) {
+  const nearest = getNearestWarehouse(lat, lng);
+  return nearest ? { lat: nearest.lat, lng: nearest.lng } : null;
+}
+
+export function getDeliveryInfoForCoords(lat, lng) {
+  const available = isDeliveryAvailable(lat, lng);
+  const deliveryMinutes = getDeliveryMinutesFromCoords(lat, lng);
+  return { deliveryMinutes, deliveryAvailable: available };
+}
 
 function App() {
   const [cart, setCart] = useState({});
@@ -18,6 +69,42 @@ function App() {
   const [showCart, setShowCart] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showAddress, setShowAddress] = useState(false);
+
+  // User location & delivery time (updated when user clicks "Detect my location")
+  const [userLocation, setUserLocation] = useState(() => {
+    try {
+      const saved = localStorage.getItem("blinkitUserLocation");
+      if (saved) {
+        const data = JSON.parse(saved);
+        if (data.lat != null && data.lng != null && data.deliveryMinutes != null)
+          return data;
+      }
+    } catch (_) {}
+    return null;
+  });
+
+  const deliveryMinutes = userLocation ? userLocation.deliveryMinutes : 8;
+  const deliveryDisplay = `${deliveryMinutes} minutes`;
+  const deliveryAvailable = userLocation
+    ? isDeliveryAvailable(userLocation.lat, userLocation.lng)
+    : null;
+  const nearestStore = userLocation
+    ? getNearestStoreCoords(userLocation.lat, userLocation.lng)
+    : null;
+
+  const onLocationUpdate = useCallback((payload) => {
+    const { lat, lng, address, deliveryMinutes: mins } = payload;
+    const next = {
+      lat,
+      lng,
+      address: address || "Current location",
+      deliveryMinutes: mins != null ? mins : getDeliveryMinutesFromCoords(lat, lng),
+    };
+    setUserLocation(next);
+    try {
+      localStorage.setItem("blinkitUserLocation", JSON.stringify(next));
+    } catch (_) {}
+  }, []);
 
   const totalItems = Object.values(cart).reduce((sum, qty) => sum + qty, 0);
 
@@ -56,6 +143,13 @@ function App() {
         openCart={() => setShowCart(true)}
         cartCount={totalItems}
         cartTotal={totalPrice}
+        deliveryDisplay={deliveryDisplay}
+        onLocationUpdate={onLocationUpdate}
+        getDeliveryInfoForCoords={getDeliveryInfoForCoords}
+        userLocation={userLocation}
+        deliveryAvailable={deliveryAvailable}
+        storeLat={nearestStore?.lat}
+        storeLng={nearestStore?.lng}
       />
 
       <Hero />
@@ -67,6 +161,7 @@ function App() {
         setCart={setCart}
         isLoggedIn={isLoggedIn}
         setShowLogin={setShowLogin}
+        deliveryDisplay={deliveryDisplay}
       />
 
       {showCart && (
@@ -78,6 +173,7 @@ function App() {
             setCart={setCart}
             closeCart={() => setShowCart(false)}
             openAddress={() => setShowAddress(true)}
+            deliveryDisplay={deliveryDisplay}
           />
           {showAddress && (
             <AddressDrawer closeAddress={() => setShowAddress(false)} />

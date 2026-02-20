@@ -3,7 +3,7 @@ import { products } from "./data/products";
 import "./CartDrawer.css";
 import { FiFileText, FiTruck, FiInfo, FiUser } from "react-icons/fi";
 
-const CartDrawer = ({ cart, setCart, closeCart, openAddress }) => {
+const CartDrawer = ({ cart, setCart, closeCart, openAddress, deliveryDisplay = "18 minutes" }) => {
   const tipOptions = [
     { amount: 20, image: "/20_tip.webp" },
     { amount: 30, image: "/30_tip.avif" },
@@ -84,7 +84,7 @@ const CartDrawer = ({ cart, setCart, closeCart, openAddress }) => {
         <div className="delivery-card">
           <div className="delivery-icon">⏱</div>
           <div>
-            <h4>Delivery in 18 minutes</h4>
+            <h4>Delivery in {deliveryDisplay}</h4>
             <p>Shipment of {totalItems} items</p>
           </div>
         </div>

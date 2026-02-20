@@ -3,20 +3,21 @@ import ProductCard from "./ProductCard";
 import { products } from "./data/products";
 import "./ProductSection.css";
 
-const ProductSection = ({ cart, setCart, isLoggedIn, setShowLogin }) => {
+const ProductSection = ({ cart, setCart, isLoggedIn, setShowLogin, deliveryDisplay }) => {
   const categories = [...new Set(products.map((p) => p.category))];
 
   return (
     <div className="section-wrapper">
       {categories.map((category) => (
         <CategoryRow
-          key={category} // ✅ FIXED
+          key={category}
           title={category}
           products={products.filter((p) => p.category === category)}
           cart={cart}
           setCart={setCart}
           setShowLogin={setShowLogin}
           isLoggedIn={isLoggedIn}
+          deliveryDisplay={deliveryDisplay}
         />
       ))}
     </div>
@@ -30,6 +31,7 @@ const CategoryRow = ({
   setCart,
   setShowLogin,
   isLoggedIn,
+  deliveryDisplay,
 }) => {
   const scrollRef = useRef(null);
 
@@ -68,6 +70,7 @@ const CategoryRow = ({
               setCart={setCart}
               isLoggedIn={isLoggedIn}
               openLoginModal={() => setShowLogin(true)}
+              deliveryDisplay={deliveryDisplay}
             />
           ))}
         </div>
