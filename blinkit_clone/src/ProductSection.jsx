@@ -1,9 +1,16 @@
-import React, { useRef, useState } from "react";
+import { useRef } from "react";
 import ProductCard from "./ProductCard";
 import { products } from "./data/products";
 import "./ProductSection.css";
 
-const ProductSection = ({ cart, setCart, isLoggedIn, setShowLogin, deliveryDisplay }) => {
+const ProductSection = ({
+  cart,
+  setCart,
+  isLoggedIn,
+  setShowLogin,
+  deliveryDisplay,
+  setSelectedProductId,
+}) => {
   const categories = [...new Set(products.map((p) => p.category))];
 
   return (
@@ -18,6 +25,7 @@ const ProductSection = ({ cart, setCart, isLoggedIn, setShowLogin, deliveryDispl
           setShowLogin={setShowLogin}
           isLoggedIn={isLoggedIn}
           deliveryDisplay={deliveryDisplay}
+          setSelectedProductId={setSelectedProductId}
         />
       ))}
     </div>
@@ -32,6 +40,7 @@ const CategoryRow = ({
   setShowLogin,
   isLoggedIn,
   deliveryDisplay,
+  setSelectedProductId,
 }) => {
   const scrollRef = useRef(null);
 
@@ -71,6 +80,7 @@ const CategoryRow = ({
               isLoggedIn={isLoggedIn}
               openLoginModal={() => setShowLogin(true)}
               deliveryDisplay={deliveryDisplay}
+              setSelectedProductId={setSelectedProductId}
             />
           ))}
         </div>

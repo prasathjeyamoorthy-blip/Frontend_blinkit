@@ -7,6 +7,7 @@ import ProductSection from "./ProductSection";
 import CartDrawer from "./CartDrawer.jsx";
 import Footer from "./Footer";
 import AddressDrawer from "./AddressDrawer";
+import ProductDetails from "./ProductDetails";
 
 import { products } from "./data/products";
 import { DELIVERY_ZONES } from "./data/deliveryZones";
@@ -69,6 +70,33 @@ function App() {
   const [showCart, setShowCart] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showAddress, setShowAddress] = useState(false);
+  const [selectedProductId, setSelectedProductId] = useState(() => {
+    const params = new URLSearchParams(window.location.search);
+    const id = params.get("productId");
+    return id ? parseInt(id, 10) : null;
+  });
+
+  // Handle browser back/forward buttons
+  useEffect(() => {
+    const handlePopState = () => {
+      const params = new URLSearchParams(window.location.search);
+      const id = params.get("productId");
+      setSelectedProductId(id ? parseInt(id, 10) : null);
+    };
+
+    window.addEventListener("popstate", handlePopState);
+    return () => window.removeEventListener("popstate", handlePopState);
+  }, []);
+
+  const navigateToProduct = (id) => {
+    window.history.pushState({}, "", `?productId=${id}`);
+    setSelectedProductId(id);
+  };
+
+  const navigateToHome = () => {
+    window.history.pushState({}, "", "/");
+    setSelectedProductId(null);
+  };
 
   // User location & delivery time (updated when user clicks "Detect my location")
   const [userLocation, setUserLocation] = useState(() => {
@@ -76,7 +104,11 @@ function App() {
       const saved = localStorage.getItem("blinkitUserLocation");
       if (saved) {
         const data = JSON.parse(saved);
-        if (data.lat != null && data.lng != null && data.deliveryMinutes != null)
+        if (
+          data.lat != null &&
+          data.lng != null &&
+          data.deliveryMinutes != null
+        )
           return data;
       }
     } catch (_) {}
@@ -98,7 +130,8 @@ function App() {
       lat,
       lng,
       address: address || "Current location",
-      deliveryMinutes: mins != null ? mins : getDeliveryMinutesFromCoords(lat, lng),
+      deliveryMinutes:
+        mins != null ? mins : getDeliveryMinutesFromCoords(lat, lng),
     };
     setUserLocation(next);
     try {
@@ -150,19 +183,36 @@ function App() {
         deliveryAvailable={deliveryAvailable}
         storeLat={nearestStore?.lat}
         storeLng={nearestStore?.lng}
+        onLogoClick={navigateToHome}
       />
 
-      <Hero />
-      <PromoSection />
-      <CategoryGrid />
+      {selectedProductId ? (
+        <ProductDetails
+          productId={selectedProductId}
+          goBack={navigateToHome}
+          cart={cart}
+          setCart={setCart}
+          isLoggedIn={isLoggedIn}
+          setShowLoginModal={setShowLoginModal}
+          deliveryDisplay={deliveryDisplay}
+          navigateToProduct={navigateToProduct}
+        />
+      ) : (
+        <>
+          <Hero />
+          <PromoSection />
+          <CategoryGrid />
 
-      <ProductSection
-        cart={cart}
-        setCart={setCart}
-        isLoggedIn={isLoggedIn}
-        setShowLogin={setShowLogin}
-        deliveryDisplay={deliveryDisplay}
-      />
+          <ProductSection
+            cart={cart}
+            setCart={setCart}
+            isLoggedIn={isLoggedIn}
+            setShowLogin={setShowLogin}
+            deliveryDisplay={deliveryDisplay}
+            setSelectedProductId={navigateToProduct}
+          />
+        </>
+      )}
 
       {showCart && (
         <>

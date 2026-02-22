@@ -1,0 +1,333 @@
+.product-details-page {
+  padding: 20px 8%;
+  background-color: #f8f9fa;
+  min-height: 100vh;
+}
+
+.pd-breadcrumbs {
+  font-size: 13px;
+  color: #666;
+  margin-bottom: 20px;
+  cursor: pointer;
+}
+
+.pd-breadcrumbs span {
+  color: #333;
+  font-weight: 500;
+}
+
+.pd-main {
+  display: flex;
+  gap: 40px;
+  background: transparent;
+  margin-bottom: 40px;
+}
+
+/* LEFT SIDE */
+.pd-left {
+  flex: 1;
+  max-width: 500px;
+  background: white;
+  border: 1px solid #e8e8e8;
+  border-radius: 12px;
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.pd-image-container {
+  width: 100%;
+  height: 350px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 20px;
+  position: relative;
+  overflow: hidden;
+  cursor: crosshair;
+}
+
+.pd-main-img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  pointer-events: none; /* Let the container handle mouse events */
+}
+
+/* ZOOM LENS */
+.pd-lens {
+  position: absolute;
+  width: 150px;
+  height: 150px;
+  background-color: rgba(255, 255, 255, 0.4);
+  border: 1px solid #ccc;
+  transform: translate(-50%, -50%);
+  pointer-events: none; /* So mouse events pass through to container */
+  box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.2);
+}
+
+.pd-thumbnails {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 30px;
+}
+
+.pd-thumb {
+  width: 60px;
+  height: 60px;
+  border: 1px solid #e8e8e8;
+  border-radius: 8px;
+  padding: 5px;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.pd-thumb.active {
+  border-color: #0c831f;
+}
+
+.pd-thumb img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.pd-product-info-block {
+  width: 100%;
+  text-align: left;
+  border-top: 1px solid #eee;
+  padding-top: 20px;
+}
+
+.pd-product-info-block h3 {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.pd-info-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.pd-info-label {
+  font-size: 12px;
+  color: #666;
+}
+
+.pd-info-value {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+/* RIGHT SIDE */
+.pd-right {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  position: relative; /* For absolute positioning of zoom container */
+}
+
+/* ZOOM CONTAINER */
+.pd-zoom-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: white;
+  z-index: 10;
+  border-radius: 12px;
+  border: 1px solid #e8e8e8;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.pd-zoomed-img {
+  width: 100%;
+  height: 100%;
+  background-repeat: no-repeat;
+  /* Adjust scale strictly by sizing the background higher than 100% */
+  background-size: 250%;
+}
+
+.pd-header {
+  background: white;
+  padding: 24px;
+  border-radius: 12px;
+  border: 1px solid #e8e8e8;
+  margin-bottom: 24px;
+}
+
+.pd-brand {
+  font-size: 12px;
+  color: #666;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.pd-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: #333;
+  margin: 0 0 16px;
+}
+
+.pd-quantity {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 20px;
+  display: inline-block;
+  background: #f4f6f8;
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+.pd-action-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+
+.pd-price-block {
+  display: flex;
+  flex-direction: column;
+}
+
+.pd-mrp {
+  font-size: 12px;
+  color: #666;
+}
+
+.pd-price {
+  font-size: 20px;
+  font-weight: 700;
+  color: #333;
+}
+
+.pd-taxes {
+  font-size: 10px;
+  color: #999;
+}
+
+/* Add Button Overrides for details page */
+.add-btn-large {
+  background: #0c831f;
+  color: white;
+  border: none;
+  padding: 10px 30px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 16px;
+  cursor: pointer;
+  min-width: 120px;
+}
+.add-btn-large:hover {
+  background: #0b701a;
+}
+.add-btn-large.disabled-btn {
+  opacity: 0.6;
+}
+
+.counter-large {
+  display: flex;
+  align-items: center;
+  background: #0c831f;
+  color: white;
+  border-radius: 8px;
+  overflow: hidden;
+  height: 40px;
+}
+
+.counter-large button {
+  background: transparent;
+  border: none;
+  color: white;
+  padding: 0 15px;
+  cursor: pointer;
+  font-size: 20px;
+  height: 100%;
+}
+
+.counter-large span {
+  padding: 0 15px;
+  font-weight: 600;
+  font-size: 16px;
+}
+
+/* Why Shop */
+.pd-why-shop {
+  background: white;
+  padding: 24px;
+  border-radius: 12px;
+  border: 1px solid #e8e8e8;
+}
+
+.pd-why-shop h3 {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 20px;
+}
+
+.why-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.why-item:last-child {
+  margin-bottom: 0;
+}
+
+.why-item img {
+  width: 32px;
+  height: 32px;
+}
+
+.why-item h4 {
+  font-size: 14px;
+  margin: 0 0 4px;
+  color: #333;
+  font-weight: 600;
+}
+
+.why-item p {
+  font-size: 12px;
+  margin: 0;
+  color: #666;
+  line-height: 1.4;
+}
+
+/* RELATED CAROUSELS */
+.pd-related {
+  margin-top: 40px;
+}
+
+.pd-carousel-section {
+  margin-bottom: 40px;
+}
+
+.pd-carousel-section h2 {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.pd-carousel-row {
+  display: flex;
+  overflow-x: auto;
+  gap: 16px;
+  padding-bottom: 15px;
+  /* hide scrollbar */
+  scrollbar-width: none;
+}
+
+.pd-carousel-row::-webkit-scrollbar {
+  display: none;
+}

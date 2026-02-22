@@ -1,4 +1,3 @@
-import React from "react";
 import "./ProductCard.css";
 
 const ProductCard = ({
@@ -8,27 +7,31 @@ const ProductCard = ({
   isLoggedIn = false,
   openLoginModal,
   deliveryDisplay,
+  setSelectedProductId,
 }) => {
   const count = cart[product.id] || 0;
   const deliveryText = deliveryDisplay
     ? `${(deliveryDisplay.replace(/\D/g, "") || "8").trim() || "8"} MINS`
     : product.delivery;
 
-  const addItem = () => {
+  const addItem = (e) => {
+    e.stopPropagation();
     setCart((prev) => ({
       ...prev,
       [product.id]: (prev[product.id] || 0) + 1,
     }));
   };
 
-  const increase = () => {
+  const increase = (e) => {
+    e.stopPropagation();
     setCart((prev) => ({
       ...prev,
       [product.id]: (prev[product.id] || 0) + 1,
     }));
   };
 
-  const decrease = () => {
+  const decrease = (e) => {
+    e.stopPropagation();
     setCart((prev) => {
       const current = prev[product.id] || 0;
       const newCount = current - 1;
@@ -47,7 +50,10 @@ const ProductCard = ({
   };
 
   return (
-    <div className="product-card">
+    <div
+      className="product-card"
+      onClick={() => setSelectedProductId && setSelectedProductId(product.id)}
+    >
       <div className="top-section">
         <img src={product.image} alt={product.title} loading="lazy" />
 

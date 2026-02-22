@@ -20,6 +20,7 @@ const Navbar = ({
   deliveryAvailable,
   storeLat,
   storeLng,
+  onLogoClick,
 }) => {
   const [open, setOpen] = useState(false);
   const [phone, setPhone] = useState("");
@@ -102,7 +103,12 @@ const Navbar = ({
     try {
       const res = await fetch(
         `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&format=json&limit=1`,
-        { headers: { "Accept-Language": "en", "User-Agent": "BlinkitClone/1.0" } }
+        {
+          headers: {
+            "Accept-Language": "en",
+            "User-Agent": "BlinkitClone/1.0",
+          },
+        },
       );
       const data = await res.json();
       if (!Array.isArray(data) || data.length === 0) {
@@ -125,23 +131,35 @@ const Navbar = ({
     <>
       <nav className="navbar">
         <div className="nav-content">
-          <h1 className="logo">
+          <h1 className="logo" onClick={onLogoClick}>
             <span className="blink">blink</span>
             <span className="it">it</span>
           </h1>
 
           <div className="divider-vertical"></div>
 
-          <div className="location-trigger" onClick={() => { setLocationError(null); setSearchError(null); setPendingLocation(null); setOpen(true); }}>
+          <div
+            className="location-trigger"
+            onClick={() => {
+              setLocationError(null);
+              setSearchError(null);
+              setPendingLocation(null);
+              setOpen(true);
+            }}
+          >
             <p className="delivery-text">Delivery in {deliveryDisplay}</p>
             <span className="select-location" title={userLocation?.address}>
               {userLocation?.address ? (
                 <>
-                  <span className="location-address-text">{userLocation.address}</span>
+                  <span className="location-address-text">
+                    {userLocation.address}
+                  </span>
                   <span className="arrow">▼</span>
                 </>
               ) : (
-                <>Select Location <span className="arrow">▼</span></>
+                <>
+                  Select Location <span className="arrow">▼</span>
+                </>
               )}
             </span>
           </div>
@@ -317,146 +335,177 @@ const Navbar = ({
 
             <div className="overlay-content overlay-content-column">
               <div className="overlay-row">
-              <button
-                className="detect-btn"
-                style={{ fontFamily: "Inter, sans-serif" }}
-                disabled={detectingLocation || !onLocationUpdate}
-                onClick={async () => {
-                  if (!onLocationUpdate) return;
-                  setLocationError(null);
-                  setDetectingLocation(true);
-                  if (!navigator.geolocation) {
-                    setLocationError("Geolocation is not supported by your browser.");
-                    setDetectingLocation(false);
-                    return;
-                  }
-                  navigator.geolocation.getCurrentPosition(
-                    async (position) => {
-                      const lat = position.coords.latitude;
-                      const lng = position.coords.longitude;
-                      let address = "Current location";
-                      try {
-                        const res = await fetch(
-                          `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`
-                        );
-                        const data = await res.json();
-                        if (data.address) {
-                          const parts = [
-                            data.address.road,
-                            data.address.suburb || data.address.neighbourhood,
-                            data.address.city || data.address.town || data.address.village,
-                          ].filter(Boolean);
-                          address = parts.length ? parts.join(", ") : data.display_name || address;
-                        }
-                      } catch (_) {}
-                      setPendingLocation({ lat, lng, address });
-                      setDetectingLocation(false);
-                    },
-                    (err) => {
+                <button
+                  className="detect-btn"
+                  style={{ fontFamily: "Inter, sans-serif" }}
+                  disabled={detectingLocation || !onLocationUpdate}
+                  onClick={async () => {
+                    if (!onLocationUpdate) return;
+                    setLocationError(null);
+                    setDetectingLocation(true);
+                    if (!navigator.geolocation) {
                       setLocationError(
-                        err.code === 1
-                          ? "Location access denied. Please allow location in browser settings."
-                          : "Could not get your location. Please try again."
+                        "Geolocation is not supported by your browser.",
                       );
                       setDetectingLocation(false);
-                    },
-                    { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
-                  );
-                }}
-              >
-                {detectingLocation ? "Detecting…" : "Detect my location"}
-              </button>
-              {locationError && (
-                <p className="location-error" style={{ color: "#dc2626", fontSize: "13px", marginTop: "8px" }}>
-                  {locationError}
-                </p>
-              )}
-
-              <div className="or-divider">
-                <div className="line"></div>
-                <span>OR</span>
-                <div className="line"></div>
-              </div>
-
-              <div className="location-search-row">
-                <input
-                  type="text"
-                  className="location-input"
-                  placeholder="Search delivery location (e.g. Chennai, Bangalore)"
-                  value={searchQuery}
-                  onChange={(e) => { setSearchQuery(e.target.value); setSearchError(null); }}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") {
-                      e.preventDefault();
-                      handleSearchLocation();
+                      return;
                     }
+                    navigator.geolocation.getCurrentPosition(
+                      async (position) => {
+                        const lat = position.coords.latitude;
+                        const lng = position.coords.longitude;
+                        let address = "Current location";
+                        try {
+                          const res = await fetch(
+                            `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`,
+                          );
+                          const data = await res.json();
+                          if (data.address) {
+                            const parts = [
+                              data.address.road,
+                              data.address.suburb || data.address.neighbourhood,
+                              data.address.city ||
+                                data.address.town ||
+                                data.address.village,
+                            ].filter(Boolean);
+                            address = parts.length
+                              ? parts.join(", ")
+                              : data.display_name || address;
+                          }
+                        } catch (_) {}
+                        setPendingLocation({ lat, lng, address });
+                        setDetectingLocation(false);
+                      },
+                      (err) => {
+                        setLocationError(
+                          err.code === 1
+                            ? "Location access denied. Please allow location in browser settings."
+                            : "Could not get your location. Please try again.",
+                        );
+                        setDetectingLocation(false);
+                      },
+                      {
+                        enableHighAccuracy: true,
+                        timeout: 10000,
+                        maximumAge: 0,
+                      },
+                    );
                   }}
-                />
-                <button
-                  type="button"
-                  className="location-search-btn"
-                  disabled={searchingLocation || !searchQuery.trim()}
-                  onClick={handleSearchLocation}
                 >
-                  {searchingLocation ? "Searching…" : "Search"}
+                  {detectingLocation ? "Detecting…" : "Detect my location"}
                 </button>
-              </div>
-              {searchError && (
-                <p className="location-error search-err">{searchError}</p>
-              )}
+                {locationError && (
+                  <p
+                    className="location-error"
+                    style={{
+                      color: "#dc2626",
+                      fontSize: "13px",
+                      marginTop: "8px",
+                    }}
+                  >
+                    {locationError}
+                  </p>
+                )}
+
+                <div className="or-divider">
+                  <div className="line"></div>
+                  <span>OR</span>
+                  <div className="line"></div>
+                </div>
+
+                <div className="location-search-row">
+                  <input
+                    type="text"
+                    className="location-input"
+                    placeholder="Search delivery location (e.g. Chennai, Bangalore)"
+                    value={searchQuery}
+                    onChange={(e) => {
+                      setSearchQuery(e.target.value);
+                      setSearchError(null);
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        e.preventDefault();
+                        handleSearchLocation();
+                      }
+                    }}
+                  />
+                  <button
+                    type="button"
+                    className="location-search-btn"
+                    disabled={searchingLocation || !searchQuery.trim()}
+                    onClick={handleSearchLocation}
+                  >
+                    {searchingLocation ? "Searching…" : "Search"}
+                  </button>
+                </div>
+                {searchError && (
+                  <p className="location-error search-err">{searchError}</p>
+                )}
               </div>
 
-              {pendingLocation && getDeliveryInfoForCoords && (() => {
-                const info = getDeliveryInfoForCoords(pendingLocation.lat, pendingLocation.lng);
-                return (
-                <div className="location-confirm-card">
-                  {info.deliveryAvailable ? (
-                    <>
-                      <div className="location-confirm-icon">📍</div>
-                      <h4 className="location-confirm-title">Use this location for delivery?</h4>
-                      <p className="location-confirm-address">{pendingLocation.address}</p>
-                      <div className="location-confirm-badge available">
-                        ✓ Delivery in {info.deliveryMinutes} minutes
-                      </div>
-                      <div className="location-confirm-actions">
-                        <button
-                          type="button"
-                          className="location-confirm-btn primary"
-                          onClick={() => {
-                            onLocationUpdate(pendingLocation);
-                            setPendingLocation(null);
-                            setOpen(false);
-                          }}
-                        >
-                          Yes, use this location
-                        </button>
-                        <button
-                          type="button"
-                          className="location-confirm-btn secondary"
-                          onClick={() => setPendingLocation(null)}
-                        >
-                          No, let me choose
-                        </button>
-                      </div>
-                    </>
-                  ) : (
-                    <>
-                      <p className="location-confirm-address">{pendingLocation.address}</p>
-                      <div className="location-confirm-badge unavailable">
-                        Delivery not available in this area
-                      </div>
-                      <button
-                        type="button"
-                        className="location-confirm-btn secondary location-confirm-btn-full"
-                        onClick={() => setPendingLocation(null)}
-                      >
-                        Choose different location
-                      </button>
-                    </>
-                  )}
-                </div>
-                );
-              })()}
+              {pendingLocation &&
+                getDeliveryInfoForCoords &&
+                (() => {
+                  const info = getDeliveryInfoForCoords(
+                    pendingLocation.lat,
+                    pendingLocation.lng,
+                  );
+                  return (
+                    <div className="location-confirm-card">
+                      {info.deliveryAvailable ? (
+                        <>
+                          <div className="location-confirm-icon">📍</div>
+                          <h4 className="location-confirm-title">
+                            Use this location for delivery?
+                          </h4>
+                          <p className="location-confirm-address">
+                            {pendingLocation.address}
+                          </p>
+                          <div className="location-confirm-badge available">
+                            ✓ Delivery in {info.deliveryMinutes} minutes
+                          </div>
+                          <div className="location-confirm-actions">
+                            <button
+                              type="button"
+                              className="location-confirm-btn primary"
+                              onClick={() => {
+                                onLocationUpdate(pendingLocation);
+                                setPendingLocation(null);
+                                setOpen(false);
+                              }}
+                            >
+                              Yes, use this location
+                            </button>
+                            <button
+                              type="button"
+                              className="location-confirm-btn secondary"
+                              onClick={() => setPendingLocation(null)}
+                            >
+                              No, let me choose
+                            </button>
+                          </div>
+                        </>
+                      ) : (
+                        <>
+                          <p className="location-confirm-address">
+                            {pendingLocation.address}
+                          </p>
+                          <div className="location-confirm-badge unavailable">
+                            Delivery not available in this area
+                          </div>
+                          <button
+                            type="button"
+                            className="location-confirm-btn secondary location-confirm-btn-full"
+                            onClick={() => setPendingLocation(null)}
+                          >
+                            Choose different location
+                          </button>
+                        </>
+                      )}
+                    </div>
+                  );
+                })()}
 
               {userLocation && !pendingLocation && (
                 <div className="location-map-section">
