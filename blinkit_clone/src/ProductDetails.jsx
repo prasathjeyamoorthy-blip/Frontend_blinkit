@@ -3,6 +3,26 @@ import "./ProductDetails.css";
 import { products } from "./data/products";
 import ProductCard from "./ProductCard";
 
+const generateExpirySvg = (price) => {
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="400" height="400">
+  <rect width="400" height="400" fill="#f8fdf8" />
+  <rect x="20" y="20" width="360" height="360" rx="16" fill="white" stroke="#e5e7eb" stroke-width="2" />
+  <circle cx="200" cy="100" r="40" fill="#fef08a" opacity="0.4" />
+  <path d="M185 100 L195 110 L215 90" stroke="#ca8a04" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+  <text x="200" y="180" font-family="Arial, sans-serif" font-size="22" font-weight="bold" fill="#374151" text-anchor="middle">Expiry Date &amp; MRP</text>
+  <rect x="60" y="210" width="280" height="40" fill="#f3f4f6" rx="6" />
+  <text x="80" y="235" font-family="Arial, sans-serif" font-size="16" fill="#6b7280" text-anchor="start">Mfg. Date:</text>
+  <text x="320" y="235" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#111827" text-anchor="end">01 NOV 2023</text>
+  <rect x="60" y="260" width="280" height="40" fill="#f3f4f6" rx="6" />
+  <text x="80" y="285" font-family="Arial, sans-serif" font-size="16" fill="#6b7280" text-anchor="start">Exp. Date:</text>
+  <text x="320" y="285" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#111827" text-anchor="end">31 OCT 2024</text>
+  <rect x="60" y="310" width="280" height="40" fill="#ecfdf5" stroke="#a7f3d0" stroke-width="2" rx="6" />
+  <text x="80" y="335" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#065f46" text-anchor="start">MRP:</text>
+  <text x="320" y="335" font-family="Arial, sans-serif" font-size="18" font-weight="bold" fill="#059669" text-anchor="end">₹ ${price}</text>
+</svg>`;
+  return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
+};
+
 const ProductDetails = ({
   productId,
   goBack,
@@ -14,13 +34,22 @@ const ProductDetails = ({
   navigateToProduct,
 }) => {
   const [product, setProduct] = useState(null);
+  const [activeImage, setActiveImage] = useState(null);
   const [isZooming, setIsZooming] = useState(false);
-  const [cursorPosition, setCursorPosition] = useState({ x: 0, y: 0 });
+  const [cursorPosition, setCursorPosition] = useState({
+    x: 0,
+    y: 0,
+    cWidth: "100%",
+    cHeight: 350,
+  });
 
   useEffect(() => {
     window.scrollTo(0, 0);
     const foundProduct = products.find((p) => p.id === productId);
     setProduct(foundProduct);
+    if (foundProduct) {
+      setActiveImage(foundProduct.image);
+    }
   }, [productId]);
 
   if (!product) return <div className="loading-product">Loading...</div>;
@@ -73,11 +102,28 @@ const ProductDetails = ({
     .slice(0, 6);
 
   const handleMouseMove = (e) => {
-    const { left, top, width, height } =
-      e.currentTarget.getBoundingClientRect();
-    const x = ((e.pageX - left) / width) * 100;
-    const y = ((e.pageY - top) / height) * 100;
-    setCursorPosition({ x, y });
+    const container = e.currentTarget;
+    const {
+      left,
+      top,
+      width: cWidth,
+      height: cHeight,
+    } = container.getBoundingClientRect();
+
+    // Lens position: tracks exact mouse inside container
+    let lensX = ((e.clientX - left) / cWidth) * 100;
+    let lensY = ((e.clientY - top) / cHeight) * 100;
+
+    // Clamp values so it doesn't pop out
+    lensX = Math.max(0, Math.min(100, lensX));
+    lensY = Math.max(0, Math.min(100, lensY));
+
+    setCursorPosition({
+      x: lensX,
+      y: lensY,
+      cWidth,
+      cHeight,
+    });
   };
 
   return (
@@ -96,7 +142,7 @@ const ProductDetails = ({
             onMouseMove={handleMouseMove}
           >
             <img
-              src={product.image}
+              src={activeImage || product.image}
               alt={product.title}
               className="pd-main-img"
             />
@@ -111,28 +157,59 @@ const ProductDetails = ({
             )}
           </div>
           <div className="pd-thumbnails">
-            {/* Show multiple thumbnails to match screenshot; here just repeating same image */}
-            <div className="pd-thumb active">
-              <img src={product.image} alt="thumb" />
-            </div>
-            <div className="pd-thumb">
-              <img src={product.image} alt="thumb" />
-            </div>
-            <div className="pd-thumb">
-              <img src={product.image} alt="thumb" />
-            </div>
-            <div className="pd-thumb">
-              <img src={product.image} alt="thumb" />
-            </div>
-            <div className="pd-thumb">
-              <img src={product.image} alt="thumb" />
-            </div>
+            {[
+              product.image,
+              generateExpirySvg(product.price),
+              "/thumb_contents.svg",
+              "/thumb_manufacturer.svg",
+              "/thumb_fssai.svg",
+            ].map((imgUrl, index) => (
+              <div
+                key={index}
+                className={`pd-thumb ${activeImage === imgUrl ? "active" : ""}`}
+                onClick={() => setActiveImage(imgUrl)}
+              >
+                <img src={imgUrl} alt={`thumb-${index}`} />
+              </div>
+            ))}
           </div>
           <div className="pd-product-info-block">
             <h3>Product Details</h3>
-            <div className="pd-info-item">
-              <span className="pd-info-label">Unit</span>
-              <span className="pd-info-value">{product.quantity}</span>
+            <div className="pd-info-wrapper">
+              <div className="pd-info-item">
+                <span className="pd-info-label">Unit</span>
+                <span className="pd-info-value">{product.quantity}</span>
+              </div>
+              <div className="pd-info-item">
+                <span className="pd-info-label">Description</span>
+                <span className="pd-info-value">
+                  Premium quality {product.title}, sourced carefully to ensure
+                  the best taste and freshness. Ideal for your everyday needs.
+                </span>
+              </div>
+              <div className="pd-info-item">
+                <span className="pd-info-label">Shelf Life</span>
+                <span className="pd-info-value">12 months</span>
+              </div>
+              <div className="pd-info-item">
+                <span className="pd-info-label">Manufacturer Details</span>
+                <span className="pd-info-value">
+                  Blinkit Clone Industries Pvt. Ltd.
+                  <br />
+                  Tech Park, Phase 1, City Center
+                  <br />
+                  Pincode: 123456, India
+                </span>
+              </div>
+              <div className="pd-info-item">
+                <span className="pd-info-label">Disclaimer</span>
+                <span className="pd-info-value">
+                  Every effort is made to maintain the accuracy of all
+                  information. However, actual product packaging and materials
+                  may contain more and/or different information. It is
+                  recommended not to solely rely on the information presented.
+                </span>
+              </div>
             </div>
           </div>
         </div>
@@ -140,13 +217,28 @@ const ProductDetails = ({
         {/* Right Side: Details & Actions */}
         <div className="pd-right">
           {isZooming && (
-            <div className="pd-zoom-container">
-              <div
-                className="pd-zoomed-img"
+            <div
+              className="pd-zoom-container"
+              style={{
+                width: cursorPosition.cWidth,
+                height: cursorPosition.cHeight,
+                overflow: "hidden",
+                padding: 0,
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <img
+                src={activeImage || product.image}
                 style={{
-                  backgroundImage: `url(${product.image})`,
-                  backgroundPosition: `${cursorPosition.x}% ${cursorPosition.y}%`,
+                  width: "100%",
+                  height: "100%",
+                  objectFit: "contain",
+                  transform: "scale(2.5)",
+                  transformOrigin: `${cursorPosition.x}% ${cursorPosition.y}%`,
                 }}
+                alt="Zoomed"
               />
             </div>
           )}
