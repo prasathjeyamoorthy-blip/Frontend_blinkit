@@ -1,0 +1,74 @@
+.seo-footer-container {
+  background-color: #fdfdfd;
+  padding: 40px 24px;
+  border-top: 1px solid #e8e8e8;
+  margin-top: 20px;
+  font-family: "Inter", sans-serif;
+}
+
+.seo-content-grid {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+}
+
+.seo-h2 {
+  font-size: 16px;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin-bottom: 20px;
+  line-height: 1.4;
+}
+
+.seo-text {
+  font-size: 12px;
+  color: #666;
+  line-height: 1.6;
+}
+
+.seo-text br {
+  display: block;
+  content: "";
+  margin-top: 16px;
+}
+
+.price-list-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+  color: #1c9b4e; /* Green matching standard Blinkit theme for items */
+}
+
+.price-list-table th {
+  text-align: left;
+  font-weight: 600;
+  color: #666;
+  padding-bottom: 12px;
+}
+
+.price-list-table td {
+  padding: 4px 0;
+  color: #0c831f; /* Brand green */
+}
+
+.price-list-table tr td:last-child,
+.price-list-table tr th:last-child {
+  text-align: right;
+  color: #666; /* Price text */
+}
+
+.seo-updated {
+  font-size: 11px;
+  color: #999;
+  font-style: italic;
+  margin-top: 20px;
+}
+
+@media (max-width: 768px) {
+  .seo-content-grid {
+    grid-template-columns: 1fr;
+    gap: 30px;
+  }
+}

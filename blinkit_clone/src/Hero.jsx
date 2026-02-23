@@ -3,14 +3,16 @@ import React from "react";
 import "./Hero.css";
 import Fruit from "../public/Fruit.png";
 
-const Hero = () => {
+const Hero = ({ onShopNow }) => {
   return (
     <div className="container">
       <section
         className="hero"
+        onClick={onShopNow}
         style={{
           backgroundImage: `url(${Fruit})`,
           fontFamily: "Inter, sans-serif",
+          cursor: "pointer",
         }}
       >
         <div className="hero-content">
@@ -21,7 +23,15 @@ const Hero = () => {
             fruits, vegetables, eggs & more{" "}
           </p>
 
-          <button className="hero-btn">Shop Now</button>
+          <button
+            className="hero-btn"
+            onClick={(e) => {
+              e.stopPropagation();
+              if (onShopNow) onShopNow();
+            }}
+          >
+            Shop Now
+          </button>
         </div>
       </section>
     </div>

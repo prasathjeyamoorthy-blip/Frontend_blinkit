@@ -8,6 +8,7 @@ import CartDrawer from "./CartDrawer.jsx";
 import Footer from "./Footer";
 import AddressDrawer from "./AddressDrawer";
 import ProductDetails from "./ProductDetails";
+import CategoryPage from "./CategoryPage"; // Added import
 
 import { products } from "./data/products";
 import { DELIVERY_ZONES } from "./data/deliveryZones";
@@ -70,10 +71,16 @@ function App() {
   const [showCart, setShowCart] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showAddress, setShowAddress] = useState(false);
+
   const [selectedProductId, setSelectedProductId] = useState(() => {
     const params = new URLSearchParams(window.location.search);
     const id = params.get("productId");
     return id ? parseInt(id, 10) : null;
+  });
+
+  const [selectedCategory, setSelectedCategory] = useState(() => {
+    const params = new URLSearchParams(window.location.search);
+    return params.get("category") || null;
   });
 
   // Handle browser back/forward buttons
@@ -81,7 +88,9 @@ function App() {
     const handlePopState = () => {
       const params = new URLSearchParams(window.location.search);
       const id = params.get("productId");
+      const cat = params.get("category");
       setSelectedProductId(id ? parseInt(id, 10) : null);
+      setSelectedCategory(cat || null);
     };
 
     window.addEventListener("popstate", handlePopState);
@@ -91,11 +100,19 @@ function App() {
   const navigateToProduct = (id) => {
     window.history.pushState({}, "", `?productId=${id}`);
     setSelectedProductId(id);
+    setSelectedCategory(null);
+  };
+
+  const navigateToCategory = (cat) => {
+    window.history.pushState({}, "", `?category=${cat}`);
+    setSelectedCategory(cat);
+    setSelectedProductId(null);
   };
 
   const navigateToHome = () => {
     window.history.pushState({}, "", "/");
     setSelectedProductId(null);
+    setSelectedCategory(null);
   };
 
   // User location & delivery time (updated when user clicks "Detect my location")
@@ -141,6 +158,8 @@ function App() {
 
   const totalItems = Object.values(cart).reduce((sum, qty) => sum + qty, 0);
 
+  // Note: custom products in category page might not be included in global 'products.js' right now.
+  // The total price works for standard global products. I've left it as is for simplicity.
   const totalPrice = products.reduce(
     (sum, item) => sum + (cart[item.id] || 0) * item.price,
     0,
@@ -186,7 +205,14 @@ function App() {
         onLogoClick={navigateToHome}
       />
 
-      {selectedProductId ? (
+      {selectedCategory ? (
+        <CategoryPage
+          catId={selectedCategory}
+          cart={cart}
+          setCart={setCart}
+          setSelectedProductId={navigateToProduct}
+        />
+      ) : selectedProductId ? (
         <ProductDetails
           productId={selectedProductId}
           goBack={navigateToHome}
@@ -199,7 +225,7 @@ function App() {
         />
       ) : (
         <>
-          <Hero />
+          <Hero onShopNow={() => navigateToCategory("daily-essentials")} />
           <PromoSection />
           <CategoryGrid />
 
