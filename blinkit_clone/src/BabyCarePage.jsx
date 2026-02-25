@@ -11,7 +11,13 @@ const BABY_CATEGORIES = [
   { id: "skin-hair-care", name: "Skin & Hair Care", icon: "🧴" },
 ];
 
-const BabyCarePage = ({ catId, cart, setCart, setSelectedProductId }) => {
+const BabyCarePage = ({
+  catId,
+  cart,
+  setCart,
+  setSelectedProductId,
+  deliveryDisplay,
+}) => {
   const [activeCategory, setActiveCategory] = useState(catId || "diapers-more");
   const [products, setProducts] = useState(
     BABY_PRODUCTS_BY_CATEGORY[catId || "diapers-more"] || [],
@@ -33,6 +39,10 @@ const BabyCarePage = ({ catId, cart, setCart, setSelectedProductId }) => {
       setProducts(BABY_PRODUCTS_BY_CATEGORY[activeCategory]);
     }
   }, [activeCategory]);
+
+  const deliveryText = deliveryDisplay
+    ? `${(deliveryDisplay.replace(/\D/g, "") || "8").trim() || "8"} MINS`
+    : "8 MINS";
 
   const handleAdd = (id, e) => {
     e.stopPropagation();
@@ -88,7 +98,9 @@ const BabyCarePage = ({ catId, cart, setCart, setSelectedProductId }) => {
                     <div className="category-product-image">
                       <img src={product.image} alt={product.title} />
                     </div>
-                    <div className="category-product-delivery"> 20 MINS</div>
+                    <div className="category-product-delivery">
+                      ⏱ {deliveryText}
+                    </div>
                     <div className="category-product-title">
                       {product.title}
                     </div>

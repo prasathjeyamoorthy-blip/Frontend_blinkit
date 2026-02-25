@@ -1,0 +1,336 @@
+﻿commit cc722a38a0fbbda8373993912f7fb9fe216ebe33
+Author: prasathjeyamoorthy-blip <prasathjeyamoorthy@gmail.com>
+Date:   Tue Feb 17 01:16:52 2026 +0530
+
+    built the navbar
+
+diff --git a/blinkit_clone/src/Navbar.css b/blinkit_clone/src/Navbar.css
+new file mode 100644
+index 0000000..37a9d1b
+--- /dev/null
++++ b/blinkit_clone/src/Navbar.css
+@@ -0,0 +1,324 @@
++* {
++  margin: 0;
++  padding: 0;
++  box-sizing: border-box;
++}
++
++/* ================= NAVBAR ================= */
++
++.navbar {
++  position: sticky;
++  top: 0;
++  background: #ffffff;
++  border-bottom: 1px solid #e5e5e5;
++  z-index: 100;
++}
++
++.nav-content {
++  display: flex;
++  align-items: center;
++  height: 100px;
++}
++
++/* Logo */
++.logo {
++  display: flex;
++  align-items: center;
++  height: 100%;
++  font-family: "Poppins", sans-serif;
++  font-weight: 800;
++  font-size: 44px;
++  margin-left: 27px;
++  margin-right: 27px;
++  letter-spacing: -1.5px;
++  cursor: pointer;
++}
++
++.blink {
++  color: #facc15;
++}
++
++.it {
++  color: #16a34a;
++}
++
++/* Divider */
++.divider-vertical {
++  width: 1px;
++  background-color: #e2e2e2;
++  margin: 0 20px;
++  align-self: stretch;
++  opacity: 0.7;
++}
++
++/* Location Trigger */
++.location-trigger {
++  cursor: pointer;
++  margin-left: 43px;
++  display: flex;
++  flex-direction: column;
++  gap: 3px;
++}
++
++.delivery-text {
++  font-family: "Poppins", sans-serif;
++  font-weight: 600;
++  font-size: 20px;
++  letter-spacing: -0.2px;
++  color: #111;
++}
++
++.select-location {
++  font-family: "Inter", sans-serif;
++  font-size: 14px;
++  font-weight: 500;
++  color: #000;
++  display: flex;
++  align-items: center;
++  gap: 5px;
++}
++
++.arrow {
++  font-size: 11px;
++}
++
++/* ================= SEARCH BAR ================= */
++
++.search-container {
++  position: relative;
++  display: flex;
++  align-items: center;
++  background: #f3f4f6;
++  border-radius: 12px;
++  padding: 14px 18px;
++  width: 650px;
++  height: 57px;
++  overflow: hidden;
++  margin-left: 40px;
++}
++
++.search-icon {
++  margin-right: 12px;
++  font-size: 18px;
++  color: #6b7280;
++  z-index: 2;
++}
++
++/* Real Input */
++.search-input {
++  position: relative;
++  border: none;
++  outline: none;
++  background: transparent;
++  font-size: 15px;
++  font-family: "Inter", sans-serif;
++  width: 100%;
++  z-index: 2;
++}
++
++/* Animated Placeholder Mask */
++.placeholder-mask {
++  position: absolute;
++  left: 48px;
++  height: 32px;
++  overflow: hidden;
++  pointer-events: none;
++}
++
++/* Sliding Stack */
++.placeholder-slider {
++  transition: transform 0.5s ease-in-out;
++}
++
++/* Each Placeholder Line */
++.placeholder-text {
++  height: 32px;
++  line-height: 32px;
++  font-size: 15px;
++  font-family: "Inter", sans-serif;
++  color: #9ca3af;
++}
++
++/* ================= MODAL BACKDROP ================= */
++
++.backdrop {
++  position: fixed;
++  inset: 0;
++  background: rgba(0, 0, 0, 0.45);
++  backdrop-filter: blur(0.4px);
++  z-index: 150;
++}
++
++/* ================= LOCATION OVERLAY ================= */
++
++.location-overlay {
++  position: fixed;
++  top: 100px;
++  left: 100px;
++  width: 550px;
++  background: #f3f4f6;
++  padding: 24px;
++  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.25);
++  z-index: 200;
++}
++
++/* Header */
++.overlay-header {
++  margin-bottom: 12px;
++  left: 60%;
++}
++
++.overlay-header h3 {
++  font-size: 18px;
++  font-weight: 500;
++  color: #1f2937;
++  letter-spacing: -0.2px;
++}
++
++/* Close Button */
++.close-btn {
++  position: absolute;
++  top: 14px;
++  right: 18px;
++  font-size: 20px;
++  cursor: pointer;
++  color: #444;
++}
++
++.close-btn:hover {
++  opacity: 0.6;
++}
++
++/* Content */
++.overlay-content {
++  display: flex;
++  align-items: center;
++  gap: 14px;
++}
++
++/* Detect Button */
++.detect-btn {
++  background: #15803d;
++  color: white;
++  border: none;
++  padding: 8px 18px;
++  border-radius: 6px;
++  font-size: 13px;
++  font-weight: 500;
++  cursor: pointer;
++  letter-spacing: 0.5px;
++}
++
++.detect-btn:hover {
++  background: #166534;
++}
++
++/* OR Divider */
++.or-divider {
++  display: flex;
++  align-items: center;
++}
++
++.or-divider .line {
++  width: 14px;
++  height: 1px;
++  background-color: #d1d5db;
++}
++
++.or-divider span {
++  width: 28px;
++  height: 28px;
++  border-radius: 50%;
++  background: #f9fafb;
++  border: 1px solid #d1d5db;
++  display: flex;
++  justify-content: center;
++  align-items: center;
++  font-size: 11px;
++  font-weight: 500;
++  color: #6b7280;
++  padding: 10px;
++}
++
++/* Input inside overlay */
++.location-input {
++  font-family: "Inter", sans-serif;
++  font-weight: 400;
++  font-size: 14px;
++  color: #6b7280;
++  width: 220px;
++  padding: 8px 16px;
++  border-radius: 10px;
++  border: 1px solid #d1d5db;
++  background: #ffffff;
++  outline: none;
++  letter-spacing: 0.2px;
++}
++
++.location-input:focus {
++  border-color: #16a34a;
++}
++
++.right-section {
++  margin-left: auto;
++  display: flex;
++  align-items: center;
++  gap: 25px;
++}
++
++/* Login Button */
++.login-btn {
++  background: none;
++  border: none;
++  color: #111827;
++  font-family: "Inter", sans-serif;
++  font-weight: 500px;
++  font-size: 19px;
++  cursor: pointer;
++  letter-spacing: 0.8px;
++  margin-right: 50px;
++}
++
++/* Cart Button */
++.cart-btn {
++  display: flex;
++  position: relative;
++  padding: 10px 20px;
++  margin-right: 40px;
++  background-color: #d1d5db;
++  color: #ffffff;
++  opacity: 0.7;
++  border-radius: 8px;
++  font-weight: 500;
++  cursor: pointer;
++  transition: 0.3s ease;
++  width: 130px;
++  height: 60px;
++}
++
++/* Disabled Cart */
++.cart-btn.disabled {
++  opacity: 0.6;
++  cursor: not-allowed;
++  pointer-events: auto;
++}
++
++/* Tooltip */
++.cart-tooltip {
++  position: absolute;
++  bottom: -30px;
++  left: 50%;
++  transform: translateX(-50%);
++  background: #111;
++  color: white;
++  padding: 4px 10px;
++  border-radius: 4px;
++  font-size: 12px;
++  opacity: 0;
++  white-space: nowrap;
++  transition: 0.3s ease;
++}
++
++.cart-btn.disabled:hover .cart-tooltip {
++  opacity: 1;
++}

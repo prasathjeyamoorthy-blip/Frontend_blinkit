@@ -13,7 +13,13 @@ const PET_CATEGORIES = [
 import { PET_PRODUCTS_BY_CATEGORY } from "./data/PetProductsData";
 export { PET_PRODUCTS_BY_CATEGORY };
 
-const PetCarePage = ({ catId, cart, setCart, setSelectedProductId }) => {
+const PetCarePage = ({
+  catId,
+  cart,
+  setCart,
+  setSelectedProductId,
+  deliveryDisplay,
+}) => {
   const [activeCategory, setActiveCategory] = useState(catId || "accessories");
   const [products, setProducts] = useState(
     PET_PRODUCTS_BY_CATEGORY[activeCategory] ||
@@ -121,6 +127,16 @@ const PetCarePage = ({ catId, cart, setCart, setSelectedProductId }) => {
     };
   }, [activeCategory]);
 
+  useEffect(() => {
+    setLoading(true);
+    setProducts(PET_PRODUCTS_BY_CATEGORY[activeCategory] || []);
+    setLoading(false);
+  }, [activeCategory]);
+
+  const deliveryText = deliveryDisplay
+    ? `${(deliveryDisplay.replace(/\D/g, "") || "8").trim() || "8"} MINS`
+    : "8 MINS";
+
   const handleAdd = (id, e) => {
     e.stopPropagation();
     setCart((prev) => ({
@@ -190,26 +206,13 @@ const PetCarePage = ({ catId, cart, setCart, setSelectedProductId }) => {
                         </div>
                       )}
 
-                      <div
-                        className="category-product-image"
-                        style={{
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                        }}
-                      >
-                        <img
-                          style={{
-                            maxHeight: "120px",
-                            maxWidth: "120px",
-                            objectFit: "contain",
-                          }}
-                          src={product.image}
-                          alt={product.title}
-                        />
+                      <div className="category-product-image">
+                        <img src={product.image} alt={product.title} />
                       </div>
 
-                      <div className="category-product-delivery">⏱ 20 MINS</div>
+                      <div className="category-product-delivery">
+                        ⏱ {deliveryText}
+                      </div>
 
                       <div className="category-product-title">
                         {product.title}

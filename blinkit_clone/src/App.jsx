@@ -17,12 +17,17 @@ import { BABY_PRODUCTS_BY_CATEGORY } from "./baby_data_loc";
 
 import { products as baseProducts } from "./data/products";
 
+const withCategory = (catMap) =>
+  Object.entries(catMap).flatMap(([cat, items]) =>
+    items.map((p) => ({ ...p, category: cat })),
+  );
+
 const allProducts = [
   ...baseProducts,
-  ...Object.values(PRODUCTS_BY_CATEGORY).flat(),
-  ...Object.values(PHARMA_PRODUCTS_BY_CATEGORY).flat(),
-  ...Object.values(PET_PRODUCTS_BY_CATEGORY).flat(),
-  ...Object.values(BABY_PRODUCTS_BY_CATEGORY).flat(),
+  ...withCategory(PRODUCTS_BY_CATEGORY),
+  ...withCategory(PHARMA_PRODUCTS_BY_CATEGORY),
+  ...withCategory(PET_PRODUCTS_BY_CATEGORY),
+  ...withCategory(BABY_PRODUCTS_BY_CATEGORY),
 ];
 import { DELIVERY_ZONES } from "./data/deliveryZones";
 
@@ -229,6 +234,7 @@ function App() {
             cart={cart}
             setCart={setCart}
             setSelectedProductId={navigateToProduct}
+            deliveryDisplay={deliveryDisplay}
           />
         ) : [
             "accessories",
@@ -242,6 +248,7 @@ function App() {
             cart={cart}
             setCart={setCart}
             setSelectedProductId={navigateToProduct}
+            deliveryDisplay={deliveryDisplay}
           />
         ) : [
             "diapers-more",
@@ -255,6 +262,7 @@ function App() {
             cart={cart}
             setCart={setCart}
             setSelectedProductId={navigateToProduct}
+            deliveryDisplay={deliveryDisplay}
           />
         ) : (
           <CategoryPage
@@ -262,6 +270,7 @@ function App() {
             cart={cart}
             setCart={setCart}
             setSelectedProductId={navigateToProduct}
+            deliveryDisplay={deliveryDisplay}
           />
         )
       ) : selectedProductId ? (
@@ -274,6 +283,7 @@ function App() {
           setShowLoginModal={setShowLoginModal}
           deliveryDisplay={deliveryDisplay}
           navigateToProduct={navigateToProduct}
+          allProducts={allProducts}
         />
       ) : (
         <>

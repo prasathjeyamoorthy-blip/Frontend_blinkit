@@ -1,0 +1,468 @@
+﻿commit d3f07797d9feb5709bc6ee5b979f59164a8b0763
+Author: prasathjeyamoorthy-blip <prasathjeyamoorthy@gmail.com>
+Date:   Fri Feb 20 22:53:36 2026 +0530
+
+    made some improvements
+
+diff --git a/blinkit_clone/src/Navbar.jsx b/blinkit_clone/src/Navbar.jsx
+index ef33c76..bd980dd 100644
+--- a/blinkit_clone/src/Navbar.jsx
++++ b/blinkit_clone/src/Navbar.jsx
+@@ -1,6 +1,7 @@
+ import React, { useState, useEffect } from "react";
+ import "./Navbar.css";
+ import { FiSearch, FiShoppingCart } from "react-icons/fi";
++import LocationMap from "./LocationMap";
+ 
+ const Navbar = ({
+   cartCount,
+@@ -10,13 +11,26 @@ const Navbar = ({
+   setIsLoggedIn,
+   showLoginModal,
+   setShowLoginModal,
+-  setShowCart, // Γ£à NEW
+-  cart, // Γ£à NEW
++  setShowCart,
++  cart,
++  deliveryDisplay = "8 minutes",
++  onLocationUpdate,
++  getDeliveryInfoForCoords,
++  userLocation,
++  deliveryAvailable,
++  storeLat,
++  storeLng,
+ }) => {
+   const [open, setOpen] = useState(false);
+   const [phone, setPhone] = useState("");
+   const [loginSuccess, setLoginSuccess] = useState(false);
+   const [showAccountDropdown, setShowAccountDropdown] = useState(false);
++  const [detectingLocation, setDetectingLocation] = useState(false);
++  const [locationError, setLocationError] = useState(null);
++  const [searchQuery, setSearchQuery] = useState("");
++  const [searchingLocation, setSearchingLocation] = useState(false);
++  const [searchError, setSearchError] = useState(null);
++  const [pendingLocation, setPendingLocation] = useState(null);
+ 
+   const suggestions = [
+     "curd",
+@@ -79,6 +93,34 @@ const Navbar = ({
+     0,
+   );
+ 
++  /* ---------------- SEARCH LOCATION (GEOCODE) ---------------- */
++  const handleSearchLocation = async () => {
++    const query = searchQuery.trim();
++    if (!query) return;
++    setSearchError(null);
++    setSearchingLocation(true);
++    try {
++      const res = await fetch(
++        `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&format=json&limit=1`,
++        { headers: { "Accept-Language": "en", "User-Agent": "BlinkitClone/1.0" } }
++      );
++      const data = await res.json();
++      if (!Array.isArray(data) || data.length === 0) {
++        setSearchError("Location not found. Try a different city or area.");
++        return;
++      }
++      const first = data[0];
++      const lat = parseFloat(first.lat);
++      const lng = parseFloat(first.lon);
++      const address = first.display_name || query;
++      setPendingLocation({ lat, lng, address });
++    } catch (_) {
++      setSearchError("Could not search location. Please try again.");
++    } finally {
++      setSearchingLocation(false);
++    }
++  };
++
+   return (
+     <>
+       <nav className="navbar">
+@@ -90,10 +132,17 @@ const Navbar = ({
+ 
+           <div className="divider-vertical"></div>
+ 
+-          <div className="location-trigger" onClick={() => setOpen(true)}>
+-            <p className="delivery-text">Delivery in 8 minutes</p>
+-            <span className="select-location">
+-              Select Location <span className="arrow">Γû╝</span>
++          <div className="location-trigger" onClick={() => { setLocationError(null); setSearchError(null); setPendingLocation(null); setOpen(true); }}>
++            <p className="delivery-text">Delivery in {deliveryDisplay}</p>
++            <span className="select-location" title={userLocation?.address}>
++              {userLocation?.address ? (
++                <>
++                  <span className="location-address-text">{userLocation.address}</span>
++                  <span className="arrow">Γû╝</span>
++                </>
++              ) : (
++                <>Select Location <span className="arrow">Γû╝</span></>
++              )}
+             </span>
+           </div>
+ 
+@@ -266,13 +315,62 @@ const Navbar = ({
+               </h3>
+             </div>
+ 
+-            <div className="overlay-content">
++            <div className="overlay-content overlay-content-column">
++              <div className="overlay-row">
+               <button
+                 className="detect-btn"
+                 style={{ fontFamily: "Inter, sans-serif" }}
++                disabled={detectingLocation || !onLocationUpdate}
++                onClick={async () => {
++                  if (!onLocationUpdate) return;
++                  setLocationError(null);
++                  setDetectingLocation(true);
++                  if (!navigator.geolocation) {
++                    setLocationError("Geolocation is not supported by your browser.");
++                    setDetectingLocation(false);
++                    return;
++                  }
++                  navigator.geolocation.getCurrentPosition(
++                    async (position) => {
++                      const lat = position.coords.latitude;
++                      const lng = position.coords.longitude;
++                      let address = "Current location";
++                      try {
++                        const res = await fetch(
++                          `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`
++                        );
++                        const data = await res.json();
++                        if (data.address) {
++                          const parts = [
++                            data.address.road,
++                            data.address.suburb || data.address.neighbourhood,
++                            data.address.city || data.address.town || data.address.village,
++                          ].filter(Boolean);
++                          address = parts.length ? parts.join(", ") : data.display_name || address;
++                        }
++                      } catch (_) {}
++                      setPendingLocation({ lat, lng, address });
++                      setDetectingLocation(false);
++                    },
++                    (err) => {
++                      setLocationError(
++                        err.code === 1
++                          ? "Location access denied. Please allow location in browser settings."
++                          : "Could not get your location. Please try again."
++                      );
++                      setDetectingLocation(false);
++                    },
++                    { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
++                  );
++                }}
+               >
+-                Detect my location
++                {detectingLocation ? "DetectingΓÇª" : "Detect my location"}
+               </button>
++              {locationError && (
++                <p className="location-error" style={{ color: "#dc2626", fontSize: "13px", marginTop: "8px" }}>
++                  {locationError}
++                </p>
++              )}
+ 
+               <div className="or-divider">
+                 <div className="line"></div>
+@@ -280,11 +378,107 @@ const Navbar = ({
+                 <div className="line"></div>
+               </div>
+ 
+-              <input
+-                type="text"
+-                className="location-input"
+-                placeholder="search delivery location"
+-              />
++              <div className="location-search-row">
++                <input
++                  type="text"
++                  className="location-input"
++                  placeholder="Search delivery location (e.g. Chennai, Bangalore)"
++                  value={searchQuery}
++                  onChange={(e) => { setSearchQuery(e.target.value); setSearchError(null); }}
++                  onKeyDown={(e) => {
++                    if (e.key === "Enter") {
++                      e.preventDefault();
++                      handleSearchLocation();
++                    }
++                  }}
++                />
++                <button
++                  type="button"
++                  className="location-search-btn"
++                  disabled={searchingLocation || !searchQuery.trim()}
++                  onClick={handleSearchLocation}
++                >
++                  {searchingLocation ? "SearchingΓÇª" : "Search"}
++                </button>
++              </div>
++              {searchError && (
++                <p className="location-error search-err">{searchError}</p>
++              )}
++              </div>
++
++              {pendingLocation && getDeliveryInfoForCoords && (() => {
++                const info = getDeliveryInfoForCoords(pendingLocation.lat, pendingLocation.lng);
++                return (
++                <div className="location-confirm-card">
++                  {info.deliveryAvailable ? (
++                    <>
++                      <div className="location-confirm-icon">≡ƒôì</div>
++                      <h4 className="location-confirm-title">Use this location for delivery?</h4>
++                      <p className="location-confirm-address">{pendingLocation.address}</p>
++                      <div className="location-confirm-badge available">
++                        Γ£ô Delivery in {info.deliveryMinutes} minutes
++                      </div>
++                      <div className="location-confirm-actions">
++                        <button
++                          type="button"
++                          className="location-confirm-btn primary"
++                          onClick={() => {
++                            onLocationUpdate(pendingLocation);
++                            setPendingLocation(null);
++                            setOpen(false);
++                          }}
++                        >
++                          Yes, use this location
++                        </button>
++                        <button
++                          type="button"
++                          className="location-confirm-btn secondary"
++                          onClick={() => setPendingLocation(null)}
++                        >
++                          No, let me choose
++                        </button>
++                      </div>
++                    </>
++                  ) : (
++                    <>
++                      <p className="location-confirm-address">{pendingLocation.address}</p>
++                      <div className="location-confirm-badge unavailable">
++                        Delivery not available in this area
++                      </div>
++                      <button
++                        type="button"
++                        className="location-confirm-btn secondary location-confirm-btn-full"
++                        onClick={() => setPendingLocation(null)}
++                      >
++                        Choose different location
++                      </button>
++                    </>
++                  )}
++                </div>
++                );
++              })()}
++
++              {userLocation && !pendingLocation && (
++                <div className="location-map-section">
++                  <div
++                    className={`delivery-availability-badge ${deliveryAvailable ? "available" : "unavailable"}`}
++                  >
++                    {deliveryAvailable ? (
++                      <>Γ£ô Delivery available at your location</>
++                    ) : (
++                      <>Delivery not available in your area</>
++                    )}
++                  </div>
++                  <LocationMap
++                    lat={userLocation.lat}
++                    lng={userLocation.lng}
++                    address={userLocation.address}
++                    showStore={true}
++                    storeLat={storeLat}
++                    storeLng={storeLng}
++                  />
++                </div>
++              )}
+             </div>
+ 
+             <span className="close-btn" onClick={() => setOpen(false)}>
+
+commit cc722a38a0fbbda8373993912f7fb9fe216ebe33
+Author: prasathjeyamoorthy-blip <prasathjeyamoorthy@gmail.com>
+Date:   Tue Feb 17 01:16:52 2026 +0530
+
+    built the navbar
+
+diff --git a/blinkit_clone/src/Navbar.jsx b/blinkit_clone/src/Navbar.jsx
+new file mode 100644
+index 0000000..9c7e228
+--- /dev/null
++++ b/blinkit_clone/src/Navbar.jsx
+@@ -0,0 +1,173 @@
++import React, { useState, useEffect } from "react";
++import "./Navbar.css";
++import { FiSearch, FiShoppingCart } from "react-icons/fi";
++
++const Navbar = () => {
++  const [open, setOpen] = useState(false);
++  const [isLoggedIn, setIsLoggedIn] = useState(false);
++
++  const suggestions = [
++    "curd",
++    "chocolate",
++    "chips",
++    "milk",
++    "rice",
++    "egg",
++    "bread",
++    "sugar",
++    "butter",
++  ];
++
++  const [index, setIndex] = useState(0);
++  const [searchValue, setSearchValue] = useState("");
++
++  useEffect(() => {
++    if (searchValue !== "") return;
++
++    const interval = setInterval(() => {
++      setIndex((prev) => (prev + 1) % suggestions.length);
++    }, 2000);
++
++    return () => clearInterval(interval);
++  }, [searchValue]);
++
++  return (
++    <>
++      <nav className="navbar">
++        <div className="nav-content">
++          {/* Logo */}
++          <h1 className="logo">
++            <span className="blink">blink</span>
++            <span className="it">it</span>
++          </h1>
++
++          <div className="divider-vertical"></div>
++
++          {/* Location */}
++          <div className="location-trigger" onClick={() => setOpen(true)}>
++            <p className="delivery-text">Delivery in 8 minutes</p>
++            <span className="select-location">
++              Select Location <span className="arrow">Γû╝</span>
++            </span>
++          </div>
++
++          {/* Search */}
++          <div className="search-container">
++            <span className="search-icon">
++              <FiSearch size={20} color="#111" />
++            </span>
++
++            {/* Hide animation when typing */}
++            {searchValue.length === 0 && (
++              <div className="placeholder-mask">
++                <div
++                  className="placeholder-slider"
++                  style={{ transform: `translateY(-${index * 32}px)` }}
++                >
++                  {suggestions.map((item, i) => (
++                    <div key={i} className="placeholder-text">
++                      Search "{item}"
++                    </div>
++                  ))}
++                </div>
++              </div>
++            )}
++
++            <input
++              type="text"
++              className="search-input"
++              value={searchValue}
++              onChange={(e) => setSearchValue(e.target.value)}
++            />
++          </div>
++
++          {/* Right Section */}
++          <div className="right-section">
++            {!isLoggedIn ? (
++              <button className="login-btn" onClick={() => setIsLoggedIn(true)}>
++                Login
++              </button>
++            ) : (
++              <span className="welcome-text">Hi, User</span>
++            )}
++
++            <div
++              className={`cart-btn ${!isLoggedIn ? "disabled" : ""}`}
++              onClick={() => {
++                if (!isLoggedIn) return;
++                alert("Opening cart...");
++              }}
++            >
++              <FiShoppingCart size={20} style={{ marginTop: "8px" }} />
++              <span
++                style={{
++                  marginLeft: "10px",
++                  marginTop: "8px",
++                  fontFamily: "Inter, sans-serif",
++                }}
++              >
++                My Cart
++              </span>
++
++              {!isLoggedIn && (
++                <span className="cart-tooltip">Login to access cart</span>
++              )}
++            </div>
++          </div>
++        </div>
++      </nav>
++      {/* Overlay */}
++      {open && (
++        <>
++          {/* Backdrop */}
++          <div className="backdrop" onClick={() => setOpen(false)}></div>
++
++          {/* Location Modal */}
++          <div className="location-overlay">
++            <div className="overlay-header">
++              <h3
++                style={{
++                  fontFamily: "Inter, sans-serif",
++                  fontSize: "16px",
++                  fontWeight: 500,
++                  color: "#1f2937",
++                  letterSpacing: "0.7px",
++                  margin: 0,
++                }}
++              >
++                Change Location
++              </h3>
++            </div>
++
++            <div className="overlay-content">
++              <button
++                className="detect-btn"
++                style={{ fontFamily: "Inter, sans-serif" }}
++              >
++                Detect my location
++              </button>
++
++              <div className="or-divider">
++                <div className="line"></div>
++                <span>OR</span>
++                <div className="line"></div>
++              </div>
++
++              <input
++                type="text"
++                className="location-input"
++                placeholder="search delivery location"
++              />
++            </div>
++
++            <span className="close-btn" onClick={() => setOpen(false)}>
++              ├ù
++            </span>
++          </div>
++        </>
++      )}
++    </>
++  );
++};
++
++export default Navbar;

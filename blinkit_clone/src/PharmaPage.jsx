@@ -19,7 +19,13 @@ const PHARMA_CATEGORIES = [
 
 import { PHARMA_PRODUCTS_BY_CATEGORY } from "./pharma_data_loc.jsx";
 
-const PharmaPage = ({ catId, cart, setCart, setSelectedProductId }) => {
+const PharmaPage = ({
+  catId,
+  cart,
+  setCart,
+  setSelectedProductId,
+  deliveryDisplay,
+}) => {
   const [activeCategory, setActiveCategory] = useState(
     catId || "adult-diapers",
   );
@@ -46,6 +52,10 @@ const PharmaPage = ({ catId, cart, setCart, setSelectedProductId }) => {
     setProducts(targetProducts);
     setLoading(false);
   }, [activeCategory]);
+
+  const deliveryText = deliveryDisplay
+    ? `${(deliveryDisplay.replace(/\D/g, "") || "8").trim() || "8"} MINS`
+    : "8 MINS";
 
   const handleAdd = (id, e) => {
     e.stopPropagation();
@@ -125,7 +135,9 @@ const PharmaPage = ({ catId, cart, setCart, setSelectedProductId }) => {
                         />
                       </div>
 
-                      <div className="category-product-delivery">⏱ 17 MINS</div>
+                      <div className="category-product-delivery">
+                        ⏱ {deliveryText}
+                      </div>
 
                       <div className="category-product-title">
                         {product.title}

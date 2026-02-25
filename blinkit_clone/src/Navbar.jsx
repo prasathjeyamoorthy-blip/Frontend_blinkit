@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import "./Navbar.css";
-import { FiSearch, FiShoppingCart } from "react-icons/fi";
+import { FiSearch, FiShoppingCart, FiX } from "react-icons/fi";
 import LocationMap from "./LocationMap";
+import { products } from "./data/products";
 
 const Navbar = ({
   cartCount,
@@ -32,8 +33,11 @@ const Navbar = ({
   const [searchingLocation, setSearchingLocation] = useState(false);
   const [searchError, setSearchError] = useState(null);
   const [pendingLocation, setPendingLocation] = useState(null);
+  const [isSearchFocused, setIsSearchFocused] = useState(false);
 
-  const suggestions = [
+  const [searchValue, setSearchValue] = useState("");
+
+  const baseSuggestions = [
     "curd",
     "chocolate",
     "chips",
@@ -44,20 +48,34 @@ const Navbar = ({
     "sugar",
     "butter",
   ];
+  // Add first item to end for a seamless scroll
+  const suggestions = [...baseSuggestions, baseSuggestions[0]];
 
   const [index, setIndex] = useState(0);
-  const [searchValue, setSearchValue] = useState("");
+  const [isTransitioning, setIsTransitioning] = useState(true);
 
-  /* ---------------- SEARCH ANIMATION ---------------- */
   useEffect(() => {
     if (searchValue !== "") return;
 
     const interval = setInterval(() => {
-      setIndex((prev) => (prev + 1) % suggestions.length);
+      setIsTransitioning(true);
+      setIndex((prev) => prev + 1);
     }, 2000);
 
     return () => clearInterval(interval);
   }, [searchValue]);
+
+  useEffect(() => {
+    if (index === baseSuggestions.length) {
+      // Once it reaches the duplicated last item, wait for slide animation
+      // to finish then snap instantly back to the first item.
+      const timeout = setTimeout(() => {
+        setIsTransitioning(false);
+        setIndex(0);
+      }, 500);
+      return () => clearTimeout(timeout);
+    }
+  }, [index, baseSuggestions.length]);
 
   /* ---------------- CHECK LOGIN ---------------- */
   useEffect(() => {
@@ -93,6 +111,20 @@ const Navbar = ({
     (sum, qty) => sum + qty,
     0,
   );
+
+  /* ---------------- SEARCH LOCIC ---------------- */
+  const clearSearch = () => {
+    setSearchValue("");
+  };
+
+  const filteredProducts =
+    searchValue.trim() !== ""
+      ? products.filter(
+          (p) =>
+            p.title.toLowerCase().includes(searchValue.toLowerCase()) ||
+            p.category.toLowerCase().includes(searchValue.toLowerCase()),
+        )
+      : [];
 
   /* ---------------- SEARCH LOCATION (GEOCODE) ---------------- */
   const handleSearchLocation = async () => {
@@ -131,49 +163,73 @@ const Navbar = ({
     <>
       <nav className="navbar">
         <div className="nav-content">
-          <h1 className="logo" onClick={onLogoClick}>
+          <h1
+            className={`logo ${isSearchFocused ? "focused" : ""}`}
+            onClick={onLogoClick}
+          >
             <span className="blink">blink</span>
             <span className="it">it</span>
           </h1>
 
-          <div className="divider-vertical"></div>
+          <div
+            className={`divider-vertical ${isSearchFocused ? "focused" : ""}`}
+          ></div>
+
+          {!isSearchFocused && (
+            <>
+              <div
+                className="location-trigger"
+                onClick={() => {
+                  setLocationError(null);
+                  setSearchError(null);
+                  setPendingLocation(null);
+                  setOpen(true);
+                }}
+              >
+                <p className="delivery-text">Delivery in {deliveryDisplay}</p>
+                <span className="select-location" title={userLocation?.address}>
+                  {userLocation?.address ? (
+                    <>
+                      <span className="location-address-text">
+                        {userLocation.address}
+                      </span>
+                      <span className="arrow">▼</span>
+                    </>
+                  ) : (
+                    <>
+                      <span className="location-address-text">
+                        Select Location
+                      </span>
+                      <span className="arrow">▼</span>
+                    </>
+                  )}
+                </span>
+              </div>
+            </>
+          )}
 
           <div
-            className="location-trigger"
-            onClick={() => {
-              setLocationError(null);
-              setSearchError(null);
-              setPendingLocation(null);
-              setOpen(true);
-            }}
+            className={`search-container ${isSearchFocused ? "focused" : ""}`}
           >
-            <p className="delivery-text">Delivery in {deliveryDisplay}</p>
-            <span className="select-location" title={userLocation?.address}>
-              {userLocation?.address ? (
-                <>
-                  <span className="location-address-text">
-                    {userLocation.address}
-                  </span>
-                  <span className="arrow">▼</span>
-                </>
-              ) : (
-                <>
-                  Select Location <span className="arrow">▼</span>
-                </>
-              )}
-            </span>
-          </div>
-
-          <div className="search-container">
             <span className="search-icon">
-              <FiSearch size={20} color="#111" />
+              <FiSearch
+                size={isSearchFocused ? 18 : 22}
+                color={isSearchFocused ? "#333" : "#6b7280"}
+                style={{ strokeWidth: "2" }}
+              />
             </span>
 
-            {searchValue.length === 0 && (
+            {/* Animated placeholder mask */}
+            {searchValue.length === 0 && !isSearchFocused && (
               <div className="placeholder-mask">
                 <div
                   className="placeholder-slider"
-                  style={{ transform: `translateY(-${index * 32}px)` }}
+                  style={{
+                    transform: `translateY(-${index * 32}px)`,
+                    transition: isTransitioning
+                      ? "transform 0.5s ease-in-out"
+                      : "none",
+                  }}
                 >
                   {suggestions.map((item, i) => (
                     <div key={i} className="placeholder-text">
@@ -189,26 +245,56 @@ const Navbar = ({
               className="search-input"
               value={searchValue}
               onChange={(e) => setSearchValue(e.target.value)}
+              onFocus={() => setIsSearchFocused(true)}
+              onBlur={(e) => {
+                // Delay hiding the backdrop so we can click results or the clear button
+                setTimeout(() => {
+                  setIsSearchFocused(false);
+                }, 150);
+              }}
+              placeholder={
+                isSearchFocused ? "Search for atta dal and more" : ""
+              }
             />
+
+            {searchValue && (
+              <span
+                className="search-clear-icon"
+                onMouseDown={(e) => {
+                  e.preventDefault();
+                  clearSearch();
+                }}
+              >
+                <FiX size={18} color="#666" />
+              </span>
+            )}
           </div>
 
           <div className="right-section">
-            {!isLoggedIn ? (
-              <button
-                className="login-btn"
-                onClick={() => setShowLoginModal(true)}
-              >
-                Login
-              </button>
-            ) : (
-              <div
-                className="account-wrapper"
-                onClick={() => setShowAccountDropdown(!showAccountDropdown)}
-              >
-                Account ▼
-              </div>
+            {!isSearchFocused && (
+              <>
+                {!isLoggedIn ? (
+                  <button
+                    className="login-btn"
+                    onClick={() => setShowLoginModal(true)}
+                  >
+                    Login
+                  </button>
+                ) : (
+                  <div
+                    className="account-wrapper"
+                    onClick={() => setShowAccountDropdown(true)}
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "5px",
+                    }}
+                  >
+                    Account <span className="arrow">▼</span>
+                  </div>
+                )}
+              </>
             )}
-
             {/* ---------------- CART BUTTON ---------------- */}
             <div
               className={`cart-btn ${cartCount > 0 ? "active" : ""}`}
@@ -228,6 +314,108 @@ const Navbar = ({
           </div>
         </div>
       </nav>
+
+      {/* ================= SEARCH BACKDROP & RESULTS ================= */}
+      {isSearchFocused && (
+        <div className="search-backdrop">
+          {searchValue.trim() !== "" && (
+            <div className="search-results-container">
+              {/* List View for exact/close matches */}
+              <div className="search-list-view">
+                {filteredProducts.slice(0, 6).map((product) => {
+                  const escapedSearchValue = searchValue.replace(
+                    /[.*+?^${}()|[\]\\]/g,
+                    "\\$&",
+                  );
+                  const regex = new RegExp(`(${escapedSearchValue})`, "ig");
+                  const parts = product.title.split(regex);
+
+                  return (
+                    <div
+                      key={`list-${product.id}`}
+                      className="search-list-item"
+                      onMouseDown={(e) => {
+                        e.preventDefault();
+                        setSearchValue(product.title);
+                      }}
+                    >
+                      <div className="search-list-image-container">
+                        <img
+                          src={product.image}
+                          alt={product.title}
+                          className="search-list-image"
+                        />
+                      </div>
+                      <span className="search-list-title">
+                        {parts.map((part, i) =>
+                          regex.test(part) ? (
+                            <span key={i} className="match-text">
+                              {part}
+                            </span>
+                          ) : (
+                            <span key={i} className="unmatch-text">
+                              {part}
+                            </span>
+                          ),
+                        )}
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+
+              {/* Grid View for detailed results */}
+              {filteredProducts.length > 0 && (
+                <div className="search-grid-section">
+                  <h3 className="search-grid-heading">
+                    Showing results for "{searchValue}"
+                  </h3>
+                  <div className="search-products-grid">
+                    {filteredProducts.map((product) => (
+                      <div key={`grid-${product.id}`} className="product-card">
+                        <div className="product-image-container">
+                          <img
+                            src={product.image}
+                            alt={product.title}
+                            loading="lazy"
+                          />
+                        </div>
+                        <div className="delivery-time">
+                          ⏱ {product.delivery}
+                        </div>
+                        <h3 className="product-title">{product.title}</h3>
+                        <p className="product-quantity">{product.quantity}</p>
+                        <div className="product-bottom">
+                          <div className="price-container">
+                            <span className="current-price">
+                              ₹{product.price}
+                            </span>
+                          </div>
+                          <button
+                            className="add-btn"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              /* Handle add to cart */
+                            }}
+                          >
+                            ADD
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {filteredProducts.length === 0 && (
+                <div className="no-results">
+                  No results found for "{searchValue}"
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      )}
 
       {/* ================= LOGIN MODAL ================= */}
       {showLoginModal && (

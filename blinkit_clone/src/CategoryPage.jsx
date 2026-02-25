@@ -13,7 +13,13 @@ const CATEGORIES = [
 import { GROCERY_PRODUCTS_BY_CATEGORY as PRODUCTS_BY_CATEGORY } from "./grocery_data_loc.jsx";
 export { PRODUCTS_BY_CATEGORY };
 
-const CategoryPage = ({ catId, cart, setCart, setSelectedProductId }) => {
+const CategoryPage = ({
+  catId,
+  cart,
+  setCart,
+  setSelectedProductId,
+  deliveryDisplay,
+}) => {
   const [activeCategory, setActiveCategory] = useState(
     catId || "fresh-vegetables",
   );
@@ -39,6 +45,10 @@ const CategoryPage = ({ catId, cart, setCart, setSelectedProductId }) => {
     setProducts(PRODUCTS_BY_CATEGORY[activeCategory] || []);
     setLoading(false);
   }, [activeCategory]);
+
+  const deliveryText = deliveryDisplay
+    ? `${(deliveryDisplay.replace(/\D/g, "") || "8").trim() || "8"} MINS`
+    : "8 MINS";
 
   const handleAdd = (id, e) => {
     e.stopPropagation();
@@ -104,7 +114,9 @@ const CategoryPage = ({ catId, cart, setCart, setSelectedProductId }) => {
                         <img src={product.image} alt={product.title} />
                       </div>
 
-                      <div className="category-product-delivery">⏱ 17 MINS</div>
+                      <div className="category-product-delivery">
+                        ⏱ {deliveryText}
+                      </div>
 
                       <div className="category-product-title">
                         {product.title}
