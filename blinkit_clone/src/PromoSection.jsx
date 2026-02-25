@@ -6,12 +6,15 @@ import Medicine from "../public/medicine.png";
 import Petfood from "../public/petfood.png";
 import Baby from "../public/babydiapers.png";
 
-const PromoSection = () => {
+const PromoSection = ({ navigateToCategory }) => {
   return (
     <div className="promo-container">
       <div
         className="promo-card"
-        style={{ backgroundImage: `url(${Medicine})` }}
+        style={{ backgroundImage: `url(${Medicine})`, cursor: "pointer" }}
+        onClick={() =>
+          navigateToCategory && navigateToCategory("adult-diapers")
+        }
       >
         <div className="promo-content" style={{ marginRight: "170px" }}>
           <h3>Pharmacy at your doorstep!</h3>
@@ -22,7 +25,8 @@ const PromoSection = () => {
 
       <div
         className="promo-card"
-        style={{ backgroundImage: `url(${Petfood})` }}
+        style={{ backgroundImage: `url(${Petfood})`, cursor: "pointer" }}
+        onClick={() => navigateToCategory && navigateToCategory("accessories")}
       >
         <div className="promo-content" style={{ marginLeft: "130px" }}>
           <h3>Pet care supplies at your door</h3>
@@ -31,7 +35,11 @@ const PromoSection = () => {
         </div>
       </div>
 
-      <div className="promo-card" style={{ backgroundImage: `url(${Baby})` }}>
+      <div
+        className="promo-card"
+        style={{ backgroundImage: `url(${Baby})`, cursor: "pointer" }}
+        onClick={() => navigateToCategory && navigateToCategory("diapers-more")}
+      >
         <div className="promo-content">
           <button
             className="promo-btn dark"

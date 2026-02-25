@@ -8,9 +8,21 @@ import CartDrawer from "./CartDrawer.jsx";
 import Footer from "./Footer";
 import AddressDrawer from "./AddressDrawer";
 import ProductDetails from "./ProductDetails";
-import CategoryPage from "./CategoryPage"; // Added import
+import CategoryPage, { PRODUCTS_BY_CATEGORY } from "./CategoryPage";
+import PharmaPage, { PHARMA_PRODUCTS_BY_CATEGORY } from "./PharmaPage";
+import PetCarePage, { PET_PRODUCTS_BY_CATEGORY } from "./PetCarePage";
+import BabyCarePage from "./BabyCarePage";
+import { BABY_PRODUCTS_BY_CATEGORY } from "./baby_data_loc";
 
-import { products } from "./data/products";
+import { products as baseProducts } from "./data/products";
+
+const allProducts = [
+  ...baseProducts,
+  ...Object.values(PRODUCTS_BY_CATEGORY).flat(),
+  ...Object.values(PHARMA_PRODUCTS_BY_CATEGORY).flat(),
+  ...Object.values(PET_PRODUCTS_BY_CATEGORY).flat(),
+  ...Object.values(BABY_PRODUCTS_BY_CATEGORY).flat(),
+];
 import { DELIVERY_ZONES } from "./data/deliveryZones";
 
 const DELIVERY_RADIUS_KM = 20; // Delivery available within this distance from nearest service point
@@ -158,9 +170,8 @@ function App() {
 
   const totalItems = Object.values(cart).reduce((sum, qty) => sum + qty, 0);
 
-  // Note: custom products in category page might not be included in global 'products.js' right now.
-  // The total price works for standard global products. I've left it as is for simplicity.
-  const totalPrice = products.reduce(
+  // Note: All products aggregated to fix cart price computation
+  const totalPrice = allProducts.reduce(
     (sum, item) => sum + (cart[item.id] || 0) * item.price,
     0,
   );
@@ -206,12 +217,52 @@ function App() {
       />
 
       {selectedCategory ? (
-        <CategoryPage
-          catId={selectedCategory}
-          cart={cart}
-          setCart={setCart}
-          setSelectedProductId={navigateToProduct}
-        />
+        [
+          "adult-diapers",
+          "health-wellness",
+          "protein-workout",
+          "antiseptic",
+        ].includes(selectedCategory) ? (
+          <PharmaPage
+            catId={selectedCategory}
+            cart={cart}
+            setCart={setCart}
+            setSelectedProductId={navigateToProduct}
+          />
+        ) : [
+            "accessories",
+            "cat-needs",
+            "diverse",
+            "dog-needs",
+            "pet-grooming",
+          ].includes(selectedCategory) ? (
+          <PetCarePage
+            catId={selectedCategory}
+            cart={cart}
+            setCart={setCart}
+            setSelectedProductId={navigateToProduct}
+          />
+        ) : [
+            "diapers-more",
+            "bathing-needs",
+            "baby-wipes",
+            "baby-food",
+            "skin-hair-care",
+          ].includes(selectedCategory) ? (
+          <BabyCarePage
+            catId={selectedCategory}
+            cart={cart}
+            setCart={setCart}
+            setSelectedProductId={navigateToProduct}
+          />
+        ) : (
+          <CategoryPage
+            catId={selectedCategory}
+            cart={cart}
+            setCart={setCart}
+            setSelectedProductId={navigateToProduct}
+          />
+        )
       ) : selectedProductId ? (
         <ProductDetails
           productId={selectedProductId}
@@ -225,8 +276,8 @@ function App() {
         />
       ) : (
         <>
-          <Hero onShopNow={() => navigateToCategory("daily-essentials")} />
-          <PromoSection />
+          <Hero onShopNow={() => navigateToCategory("fresh-vegetables")} />
+          <PromoSection navigateToCategory={navigateToCategory} />
           <CategoryGrid />
 
           <ProductSection
@@ -246,6 +297,7 @@ function App() {
 
           <CartDrawer
             cart={cart}
+            products={allProducts}
             setCart={setCart}
             closeCart={() => setShowCart(false)}
             openAddress={() => setShowAddress(true)}

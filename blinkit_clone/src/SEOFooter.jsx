@@ -37,15 +37,15 @@ const SEOFooter = () => {
             </thead>
             <tbody>
               <tr>
-                <td>1. Coriander Bunch (Kothamalli)</td>
+                <td>1. Coriander Bunch </td>
                 <td>Rs.1</td>
               </tr>
               <tr>
-                <td>2. Onion (Vengayam)</td>
+                <td>2. Onion </td>
                 <td>Rs.30</td>
               </tr>
               <tr>
-                <td>3. Green Chilli (Pachai Milagaai)</td>
+                <td>3. Green Chilli </td>
                 <td>Rs.18</td>
               </tr>
               <tr>
@@ -53,27 +53,27 @@ const SEOFooter = () => {
                 <td>Rs.17</td>
               </tr>
               <tr>
-                <td>5. Potato (Urulaikizhangu)</td>
+                <td>5. Potato </td>
                 <td>Rs.29</td>
               </tr>
               <tr>
-                <td>6. Lemon (Elumichai Pazham)</td>
+                <td>6. Lemon </td>
                 <td>Rs.31</td>
               </tr>
               <tr>
-                <td>7. Ginger (Inji)</td>
+                <td>7. Ginger </td>
                 <td>Rs.22</td>
               </tr>
               <tr>
-                <td>8. Hybrid Tomato (Thakkali)</td>
+                <td>8. Hybrid Tomato </td>
                 <td>Rs.19</td>
               </tr>
               <tr>
-                <td>9. Mint Leaves (Pudina)</td>
+                <td>9. Mint Leaves </td>
                 <td>Rs.13</td>
               </tr>
               <tr>
-                <td>10. Curry Leaves (Karuvepillai)</td>
+                <td>10. Curry Leaves </td>
                 <td>Rs.16</td>
               </tr>
             </tbody>

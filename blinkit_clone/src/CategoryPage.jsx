@@ -10,7 +10,7 @@ const CATEGORIES = [
   { id: "trusted-organic", name: "Trusted\nOrganic", icon: "🍅" },
 ];
 
-const PRODUCTS_BY_CATEGORY = {
+export const PRODUCTS_BY_CATEGORY = {
   "fresh-vegetables": [
     {
       id: "v1",
@@ -1598,16 +1598,26 @@ const PRODUCTS_BY_CATEGORY = {
   ],
 };
 
-const CategoryPage = ({ cart, setCart, setSelectedProductId }) => {
-  const [activeCategory, setActiveCategory] = useState("fresh-vegetables");
+const CategoryPage = ({ catId, cart, setCart, setSelectedProductId }) => {
+  const [activeCategory, setActiveCategory] = useState(
+    catId || "fresh-vegetables",
+  );
   const [products, setProducts] = useState(
-    PRODUCTS_BY_CATEGORY["fresh-vegetables"],
+    PRODUCTS_BY_CATEGORY[activeCategory] ||
+      PRODUCTS_BY_CATEGORY["fresh-vegetables"] ||
+      [],
   );
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
+
+  useEffect(() => {
+    if (catId && PRODUCTS_BY_CATEGORY[catId]) {
+      setActiveCategory(catId);
+    }
+  }, [catId]);
 
   useEffect(() => {
     let isMounted = true;
@@ -1639,7 +1649,29 @@ const CategoryPage = ({ cart, setCart, setSelectedProductId }) => {
               const data = await res.json();
 
               if (data && data.results && data.results.length > 0) {
-                return { ...prod, image: data.results[0].urls.small };
+                const photo = data.results[0];
+                const alt = (
+                  photo.alt_description ||
+                  photo.description ||
+                  ""
+                ).toLowerCase();
+                const tags = photo.tags
+                  ? photo.tags.map((t) => t.title.toLowerCase())
+                  : [];
+
+                // Ensure exactness by checking if the significant words of searchTerm
+                // are actually present in the image description or tags
+                const termWords = prod.searchTerm
+                  .toLowerCase()
+                  .split(" ")
+                  .filter((w) => w.length > 2);
+                const isExact = termWords.every(
+                  (w) => alt.includes(w) || tags.some((t) => t.includes(w)),
+                );
+
+                if (isExact) {
+                  return { ...prod, image: photo.urls.small };
+                }
               }
               // Fallback if no exact search match: dont include that product
               return null;

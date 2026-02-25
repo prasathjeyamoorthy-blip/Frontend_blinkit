@@ -1,9 +1,15 @@
 import { useState } from "react";
-import { products } from "./data/products";
 import "./CartDrawer.css";
 import { FiFileText, FiTruck, FiInfo, FiUser } from "react-icons/fi";
 
-const CartDrawer = ({ cart, setCart, closeCart, openAddress, deliveryDisplay = "18 minutes" }) => {
+const CartDrawer = ({
+  cart,
+  products,
+  setCart,
+  closeCart,
+  openAddress,
+  deliveryDisplay = "18 minutes",
+}) => {
   const tipOptions = [
     { amount: 20, image: "/20_tip.webp" },
     { amount: 30, image: "/30_tip.avif" },
