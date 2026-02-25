@@ -51,15 +51,6 @@ export const PET_PRODUCTS_BY_CATEGORY = {
       "image": "https://cdn3.getprintbox.com/pbx2-pbww/media/productimage/d2dee70c-5116-4e4b-9035-40762d901046/Blank Pet Collar_thumb_900x900?mt=1604939472.573518"
     },
     {
-      "id": "pt6",
-      "title": "Pet Carrier Bag",
-      "weight": "1 pc",
-      "price": 850,
-      "originalPrice": 999,
-      "discount": "15%",
-      "searchTerm": "pet carrier"
-    },
-    {
       "id": "pt7",
       "title": "Automatic Water Dispenser",
       "weight": "1 pc",
@@ -98,36 +89,6 @@ export const PET_PRODUCTS_BY_CATEGORY = {
       "discount": "25%",
       "searchTerm": "poop bag holder",
       "image": "https://us.dogbydrlisa.com/cdn/shop/products/k2.jpg?v=1694474903"
-    },
-    {
-      "id": "pt11",
-      "title": "Compostable Poop Bags",
-      "weight": "60 pcs",
-      "price": 250,
-      "originalPrice": 300,
-      "discount": "16%",
-      "searchTerm": "dog poop bags",
-      "image": "http://www.petstop.ie/cdn/shop/products/Dog_Dirt_Bags_with_Lavender_Scent_Medium_cf32de69-e8dd-4ff8-a0aa-35978e4593cf.jpg?v=1644274728"
-    },
-    {
-      "id": "pt12",
-      "title": "Catnip Toy",
-      "weight": "1 pc",
-      "price": 80,
-      "originalPrice": 100,
-      "discount": "20%",
-      "searchTerm": "catnip toy",
-      "image": "http://firehousepetshop.com/cdn/shop/files/DouglasWinnieCat.png?v=1760483224"
-    },
-    {
-      "id": "pt13",
-      "title": "Feather Wand Cat Toy",
-      "weight": "1 pc",
-      "price": 110,
-      "originalPrice": 130,
-      "discount": "15%",
-      "searchTerm": "cat feather toy",
-      "image": "http://mademoggie.com.au/cdn/shop/products/Cat-Toy-Feather-Ostrich-Refill-2.jpg?v=1680673591"
     },
     {
       "id": "pt14",
@@ -320,16 +281,6 @@ export const PET_PRODUCTS_BY_CATEGORY = {
       "discount": "7%",
       "searchTerm": "sheba cat food",
       "image": "https://www.sheba.in/cdn-cgi/image/format=auto,q=90/sites/g/files/fnmzdf2656/files/2022-08/19334214023929-product-image-3.png"
-    },
-    {
-      "id": "pt33",
-      "title": "Cat Litter Scoop",
-      "weight": "1 pc",
-      "price": 80,
-      "originalPrice": 110,
-      "discount": "27%",
-      "searchTerm": "litter scoop",
-      "image": "http://www.shopallpaws.com/cdn/shop/products/litterlifter.jpg?v=1663958037"
     },
     {
       "id": "pt34",
@@ -582,16 +533,6 @@ export const PET_PRODUCTS_BY_CATEGORY = {
       "discount": "16%",
       "searchTerm": "aquarium filter",
       "image": "https://www.volikart.com/cdn/shop/files/C874F9D6-E2B8-4A9B-B414-4E4B58371D4C.jpg?v=1744619402&width=1445"
-    },
-    {
-      "id": "pt59",
-      "title": "Aquarium Water Conditioner",
-      "weight": "100 ml",
-      "price": 110,
-      "originalPrice": 140,
-      "discount": "21%",
-      "searchTerm": "aquarium water conditioner",
-      "image": "http://petcare.ae/cdn/shop/files/image_1024_e5bf53f7-0007-4be1-9a9d-b82a0b16b530.webp?v=1756047450"
     },
     {
       "id": "pt60",
@@ -896,16 +837,6 @@ export const PET_PRODUCTS_BY_CATEGORY = {
       "image": "https://dragonflyproducts.co.uk/cdn/shop/products/dragonfly-products-biscuit-bakes-feeling-blue.jpg?v=1706032511&width=1946"
     },
     {
-      "id": "pt90",
-      "title": "Dog Chew Bones",
-      "weight": "5 pcs",
-      "price": 180,
-      "originalPrice": 220,
-      "discount": "18%",
-      "searchTerm": "dog chew bones",
-      "image": "http://k9connoisseur.com/cdn/shop/products/jumbone.png?v=1738863677"
-    },
-    {
       "id": "pt91",
       "title": "Puppy Teething Toys",
       "weight": "1 pc",
@@ -914,16 +845,6 @@ export const PET_PRODUCTS_BY_CATEGORY = {
       "discount": "22%",
       "searchTerm": "puppy teething toy",
       "image": "https://cdn.bmstores.co.uk/images/hpcProductImage/imgFull/395001-puppy-teething-toys-long.jpg"
-    },
-    {
-      "id": "pt92",
-      "title": "Dog Diapers (Large)",
-      "weight": "10 pcs",
-      "price": 320,
-      "originalPrice": 380,
-      "discount": "15%",
-      "searchTerm": "dog diapers",
-      "image": "http://k9carts.com/cdn/shop/articles/Dog-Diapers.jpg?v=1714620980"
     },
     {
       "id": "pt93",
@@ -1186,16 +1107,6 @@ export const PET_PRODUCTS_BY_CATEGORY = {
       "discount": "21%",
       "searchTerm": "dog perfume",
       "image": "https://www.all4pets.in/wp-content/uploads/2020/05/Bath-Replacement-300x300.jpg"
-    },
-    {
-      "id": "pt119",
-      "title": "Nail Trimmer with Guard",
-      "weight": "1 pc",
-      "price": 170,
-      "originalPrice": 210,
-      "discount": "19%",
-      "searchTerm": "dog nail trimmer grinder",
-      "image": "http://www.kohepets.com.sg/cdn/shop/files/wahl-2-in-1-ez-nail-clipper-grinder-for-dogs1.jpg?v=1696690462"
     },
     {
       "id": "pt120",
