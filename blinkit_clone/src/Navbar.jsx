@@ -126,6 +126,19 @@ const Navbar = ({
         )
       : [];
 
+  const filteredCategories =
+    searchValue.trim() !== ""
+      ? Array.from(
+          new Set(
+            products
+              .filter((p) =>
+                p.category.toLowerCase().includes(searchValue.toLowerCase()),
+              )
+              .map((p) => p.category),
+          ),
+        )
+      : [];
+
   /* ---------------- SEARCH LOCATION (GEOCODE) ---------------- */
   const handleSearchLocation = async () => {
     const query = searchQuery.trim();
@@ -166,11 +179,11 @@ const Navbar = ({
           <h1
             className={`logo ${isSearchFocused ? "focused" : ""}`}
             onClick={onLogoClick}
-          >
+          > 
             <span className="blink">blink</span>
             <span className="it">it</span>
           </h1>
-
+ 
           <div
             className={`divider-vertical ${isSearchFocused ? "focused" : ""}`}
           ></div>
@@ -322,29 +335,26 @@ const Navbar = ({
             <div className="search-results-container">
               {/* List View for exact/close matches */}
               <div className="search-list-view">
-                {filteredProducts.slice(0, 6).map((product) => {
+                {/* Render Matching Categories First */}
+                {filteredCategories.slice(0, 3).map((category, idx) => {
                   const escapedSearchValue = searchValue.replace(
                     /[.*+?^${}()|[\]\\]/g,
                     "\\$&",
                   );
                   const regex = new RegExp(`(${escapedSearchValue})`, "ig");
-                  const parts = product.title.split(regex);
+                  const parts = category.split(regex);
 
                   return (
                     <div
-                      key={`list-${product.id}`}
+                      key={`cat-${idx}`}
                       className="search-list-item"
                       onMouseDown={(e) => {
                         e.preventDefault();
-                        setSearchValue(product.title);
+                        setSearchValue(category);
                       }}
                     >
-                      <div className="search-list-image-container">
-                        <img
-                          src={product.image}
-                          alt={product.title}
-                          className="search-list-image"
-                        />
+                      <div className="search-list-image-container category-icon">
+                        <FiSearch size={22} color="#6b7280" />
                       </div>
                       <span className="search-list-title">
                         {parts.map((part, i) =>
@@ -362,6 +372,50 @@ const Navbar = ({
                     </div>
                   );
                 })}
+
+                {/* Render Matching Products */}
+                {filteredProducts
+                  .slice(0, Math.max(0, 6 - filteredCategories.length))
+                  .map((product) => {
+                    const escapedSearchValue = searchValue.replace(
+                      /[.*+?^${}()|[\]\\]/g,
+                      "\\$&",
+                    );
+                    const regex = new RegExp(`(${escapedSearchValue})`, "ig");
+                    const parts = product.title.split(regex);
+
+                    return (
+                      <div
+                        key={`list-${product.id}`}
+                        className="search-list-item"
+                        onMouseDown={(e) => {
+                          e.preventDefault();
+                          setSearchValue(product.title);
+                        }}
+                      >
+                        <div className="search-list-image-container">
+                          <img
+                            src={product.image}
+                            alt={product.title}
+                            className="search-list-image"
+                          />
+                        </div>
+                        <span className="search-list-title">
+                          {parts.map((part, i) =>
+                            regex.test(part) ? (
+                              <span key={i} className="match-text">
+                                {part}
+                              </span>
+                            ) : (
+                              <span key={i} className="unmatch-text">
+                                {part}
+                              </span>
+                            ),
+                          )}
+                        </span>
+                      </div>
+                    );
+                  })}
               </div>
 
               {/* Grid View for detailed results */}
