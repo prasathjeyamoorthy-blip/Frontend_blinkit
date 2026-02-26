@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import "./ProductDetails.css";
 import { products } from "./data/products";
 import ProductCard from "./ProductCard";
@@ -114,6 +114,31 @@ const ProductDetails = ({
     }
   }, [productId]);
 
+  const categoryProducts = useMemo(() => {
+    if (!product) return [];
+    return allProducts.filter(
+      (p) => p.category === product.category && p.id !== product.id,
+    );
+  }, [allProducts, product?.category, product?.id]);
+
+  const similarProducts = useMemo(() => {
+    return categoryProducts.slice(0, 6);
+  }, [categoryProducts]);
+
+  const alsoBought = useMemo(() => {
+    // Random slice for "People also bought" from the same category
+    const remainingCategoryProducts = categoryProducts.slice(6);
+    const poolForAlsoBought =
+      remainingCategoryProducts.length > 0
+        ? remainingCategoryProducts
+        : categoryProducts;
+
+    return poolForAlsoBought
+      .slice()
+      .sort(() => 0.5 - Math.random())
+      .slice(0, 6);
+  }, [categoryProducts]);
+
   if (!product) return <div className="loading-product">Loading...</div>;
 
   const count = cart[product.id] || 0;
@@ -152,24 +177,6 @@ const ProductDetails = ({
       };
     });
   };
-
-  const categoryProducts = allProducts.filter(
-    (p) => p.category === product.category && p.id !== product.id,
-  );
-
-  const similarProducts = categoryProducts.slice(0, 6);
-
-  // Random slice for "People also bought" from the same category
-  const remainingCategoryProducts = categoryProducts.slice(6);
-  const poolForAlsoBought =
-    remainingCategoryProducts.length > 0
-      ? remainingCategoryProducts
-      : categoryProducts;
-
-  const alsoBought = poolForAlsoBought
-    .slice()
-    .sort(() => 0.5 - Math.random())
-    .slice(0, 6);
 
   const handleMouseMove = (e) => {
     const container = e.currentTarget;

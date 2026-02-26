@@ -371,6 +371,85 @@
   background: #15803d;
 }
 
+/* Floating Labels */
+.floating-input-wrap {
+  position: relative;
+  margin-bottom: 16px;
+  width: 100%;
+}
+
+.floating-input {
+  width: 100%;
+  padding: 14px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 14px;
+  color: #111;
+  background: transparent;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.floating-input:focus {
+  border-color: #16a34a;
+}
+
+.floating-input-wrap label {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: white;
+  padding: 0 4px;
+  color: #9ca3af;
+  font-size: 14px;
+  transition: 0.2s ease all;
+  pointer-events: none;
+}
+
+.floating-input:focus ~ label,
+.floating-input:not(:placeholder-shown) ~ label {
+  top: -8px;
+  transform: translateY(0);
+  font-size: 11px;
+  color: #9ca3af;
+}
+
+.floating-input:focus ~ label {
+  color: #16a34a;
+}
+
+.add-address-label-light {
+  color: #9ca3af;
+  font-size: 11px;
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+
+.add-address-sub-light {
+  color: #9ca3af;
+  margin: 12px 0 16px 0;
+  font-size: 12px;
+}
+
+.floating-clear {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  margin: 0;
+}
+
+.add-address-type-btn.active {
+  background: #f0fdf4; /* light green background */
+  border: 1px solid #16a34a; /* green border */
+  color: #111;
+}
+
+.btn-icon-wrapper.active svg {
+  color: #eab308; /* yellow icon when active based on earlier code */
+}
+
 /* Responsive - only stack on very small screens */
 @media (max-width: 640px) {
   .add-address-overlay {

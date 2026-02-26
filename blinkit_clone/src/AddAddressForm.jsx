@@ -5,14 +5,16 @@ import { MdHotel } from "react-icons/md";
 import "maplibre-gl/dist/maplibre-gl.css";
 import "./AddAddressForm.css";
 
-const MAP_STYLE = "https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json";
+const MAP_STYLE =
+  "https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json";
 
 function MapFlyTo({ latitude, longitude }) {
   const { current: mapRef } = useMap();
   React.useEffect(() => {
     if (!mapRef?.getMap || latitude == null || longitude == null) return;
     const m = mapRef.getMap();
-    if (m?.flyTo) m.flyTo({ center: [longitude, latitude], zoom: 15, duration: 600 });
+    if (m?.flyTo)
+      m.flyTo({ center: [longitude, latitude], zoom: 15, duration: 600 });
   }, [mapRef, latitude, longitude]);
   return null;
 }
@@ -41,13 +43,19 @@ const MapPanel = React.memo(function MapPanel({
           className="add-address-search-input"
           placeholder="Search 'location'"
           value={searchQuery}
-          onChange={(e) => { setSearchQuery(e.target.value); setSearchError(null); }}
+          onChange={(e) => {
+            setSearchQuery(e.target.value);
+            setSearchError(null);
+          }}
           onKeyDown={(e) => e.key === "Enter" && handleSearch()}
         />
         {searchQuery && (
           <span
             className="add-address-search-clear"
-            onClick={() => { setSearchQuery(""); setSelectedLocation(null); }}
+            onClick={() => {
+              setSearchQuery("");
+              setSelectedLocation(null);
+            }}
           >
             ×
           </span>
@@ -68,7 +76,10 @@ const MapPanel = React.memo(function MapPanel({
         >
           {selectedLocation && (
             <>
-              <MapFlyTo latitude={selectedLocation.lat} longitude={selectedLocation.lng} />
+              <MapFlyTo
+                latitude={selectedLocation.lat}
+                longitude={selectedLocation.lng}
+              />
               <Marker
                 longitude={selectedLocation.lng}
                 latitude={selectedLocation.lat}
@@ -92,10 +103,14 @@ const MapPanel = React.memo(function MapPanel({
       </button>
       {selectedLocation && (
         <div className="add-address-delivering">
-          <span className="add-address-delivering-label">Delivering your order to</span>
+          <span className="add-address-delivering-label">
+            Delivering your order to
+          </span>
           <div className="add-address-delivering-addr">
             <FiMapPin size={16} />
-            <span>{selectedLocation.address.split(",").slice(0, 2).join(", ")}</span>
+            <span>
+              {selectedLocation.address.split(",").slice(0, 2).join(", ")}
+            </span>
           </div>
         </div>
       )}
@@ -103,21 +118,44 @@ const MapPanel = React.memo(function MapPanel({
   );
 });
 
-export default function AddAddressForm({ onSave, onClose }) {
+export default function AddAddressForm({
+  onSave,
+  onClose,
+  initialData = null,
+}) {
   const [searchQuery, setSearchQuery] = useState("");
   const [searching, setSearching] = useState(false);
   const [searchError, setSearchError] = useState(null);
-  const [selectedLocation, setSelectedLocation] = useState(null);
+  const [selectedLocation, setSelectedLocation] = useState(
+    initialData
+      ? {
+          lat: initialData.lat,
+          lng: initialData.lng,
+          address: initialData.area,
+        }
+      : null,
+  );
   const [goingToCurrent, setGoingToCurrent] = useState(false);
-  const [addressType, setAddressType] = useState("home");
-  const [customAddressType, setCustomAddressType] = useState("");
-  const [customArea, setCustomArea] = useState("");
-  const [area, setArea] = useState("");
-  const [flat, setFlat] = useState("");
-  const [floor, setFloor] = useState("");
-  const [landmark, setLandmark] = useState("");
-  const [name, setName] = useState("");
-  const [phone, setPhone] = useState("");
+
+  const initType = initialData?.type ? initialData.type.toLowerCase() : "home";
+  const isCustomType = !["home", "work", "hotel"].includes(initType);
+  const [addressType, setAddressType] = useState(
+    isCustomType ? "other" : initType,
+  );
+  const [customAddressType, setCustomAddressType] = useState(
+    isCustomType ? initialData.type : "",
+  );
+  const [customArea, setCustomArea] = useState(
+    isCustomType ? initialData?.area || "" : "",
+  );
+  const [area, setArea] = useState(
+    !isCustomType ? initialData?.area || "" : "",
+  );
+  const [flat, setFlat] = useState(initialData?.flat || "");
+  const [floor, setFloor] = useState(initialData?.floor || "");
+  const [landmark, setLandmark] = useState(initialData?.landmark || "");
+  const [name, setName] = useState(initialData?.name || "");
+  const [phone, setPhone] = useState(initialData?.phone || "");
   const [formError, setFormError] = useState(null);
 
   useEffect(() => {
@@ -141,7 +179,12 @@ export default function AddAddressForm({ onSave, onClose }) {
     try {
       const res = await fetch(
         `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(q)}&format=json&limit=1`,
-        { headers: { "Accept-Language": "en", "User-Agent": "BlinkitClone/1.0" } }
+        {
+          headers: {
+            "Accept-Language": "en",
+            "User-Agent": "BlinkitClone/1.0",
+          },
+        },
       );
       const data = await res.json();
       if (!Array.isArray(data) || data.length === 0) {
@@ -175,7 +218,7 @@ export default function AddAddressForm({ onSave, onClose }) {
         let address = "Current location";
         try {
           const res = await fetch(
-            `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`
+            `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`,
           );
           const data = await res.json();
           address = data.display_name || address;
@@ -188,7 +231,7 @@ export default function AddAddressForm({ onSave, onClose }) {
         setSearchError("Could not get location");
         setGoingToCurrent(false);
       },
-      { enableHighAccuracy: true, timeout: 10000 }
+      { enableHighAccuracy: true, timeout: 10000 },
     );
   }, []);
 
@@ -216,12 +259,13 @@ export default function AddAddressForm({ onSave, onClose }) {
       setFormError("Enter Area / Sector / Locality");
       return;
     }
-    const finalType = addressType === "other" && customAddressType.trim() 
-      ? customAddressType.trim() 
-      : addressType;
-    
+    const finalType =
+      addressType === "other" && customAddressType.trim()
+        ? customAddressType.trim()
+        : addressType;
+
     const address = {
-      id: Date.now(),
+      id: initialData?.id || Date.now(),
       type: finalType,
       flat: flat.trim(),
       floor: floor.trim(),
@@ -245,11 +289,19 @@ export default function AddAddressForm({ onSave, onClose }) {
   };
 
   return (
-    <div className="add-address-overlay" onClick={(e) => e.target === e.currentTarget && onClose()}>
-      <div className="add-address-container" onClick={(e) => e.stopPropagation()}>
+    <div
+      className="add-address-overlay"
+      onClick={(e) => e.target === e.currentTarget && onClose()}
+    >
+      <div
+        className="add-address-container"
+        onClick={(e) => e.stopPropagation()}
+      >
         <div className="add-address-form-header">
           <h3>Enter complete address</h3>
-          <span className="add-address-close" onClick={onClose}>×</span>
+          <span className="add-address-close" onClick={onClose}>
+            ×
+          </span>
         </div>
 
         <div className="add-address-content">
@@ -268,132 +320,170 @@ export default function AddAddressForm({ onSave, onClose }) {
           {/* Right: Form */}
           <div className="add-address-form-panel">
             <div className="add-address-form-body">
-            <label className="add-address-label">Save address as *</label>
-            <div className="add-address-type-btns">
-              {["home", "work", "hotel", "other"].map((t) => (
-                <button
-                  key={t}
-                  type="button"
-                  className={`add-address-type-btn ${addressType === t ? "active" : ""}`}
-                  onClick={() => {
-                    setAddressType(t);
-                    if (t !== "other") {
-                      setCustomAddressType("");
-                      setCustomArea("");
-                    } else {
-                      setCustomArea(area || selectedLocation?.address || "");
-                    }
-                  }}
-                >
-                  {addressTypeIcons[t]}
-                  {t.charAt(0).toUpperCase() + t.slice(1)}
-                </button>
-              ))}
-              {addressType === "other" && (
-                <div className="add-address-inline-input-wrap">
+              <label className="add-address-label add-address-label-light">
+                Save address as *
+              </label>
+              <div className="add-address-type-btns">
+                {["home", "work", "hotel", "other"]
+                  .filter((t) => addressType !== "other" || t === "other")
+                  .map((t) => (
+                    <button
+                      key={t}
+                      type="button"
+                      className={`add-address-type-btn ${addressType === t ? "active" : ""}`}
+                      onClick={() => {
+                        setAddressType(t);
+                        if (t !== "other") {
+                          setCustomAddressType("");
+                          setCustomArea("");
+                        } else {
+                          setCustomArea(
+                            area || selectedLocation?.address || "",
+                          );
+                        }
+                      }}
+                    >
+                      {t === "home" ? (
+                        <div
+                          className={`btn-icon-wrapper ${addressType === t ? "active" : ""}`}
+                        >
+                          {addressTypeIcons[t]}
+                        </div>
+                      ) : (
+                        addressTypeIcons[t]
+                      )}
+                      {t.charAt(0).toUpperCase() + t.slice(1)}
+                    </button>
+                  ))}
+                {addressType === "other" && (
+                  <div
+                    className="add-address-inline-input-wrap"
+                    style={{ flex: 1, marginLeft: "12px", minWidth: "120px" }}
+                  >
+                    <input
+                      type="text"
+                      className="add-address-custom-type"
+                      placeholder="Save as"
+                      value={customAddressType}
+                      onChange={(e) => setCustomAddressType(e.target.value)}
+                      autoFocus
+                    />
+                    {customAddressType && (
+                      <span
+                        className="add-address-input-clear"
+                        onClick={() => setCustomAddressType("")}
+                      >
+                        ×
+                      </span>
+                    )}
+                  </div>
+                )}
+              </div>
+
+              <div className="floating-input-wrap">
+                <input
+                  type="text"
+                  className="floating-input"
+                  placeholder=" "
+                  value={flat}
+                  onChange={(e) => setFlat(e.target.value)}
+                  required
+                />
+                <label>Flat / House no / Building name *</label>
+              </div>
+
+              <div className="floating-input-wrap">
+                <input
+                  type="text"
+                  className="floating-input"
+                  placeholder=" "
+                  value={floor}
+                  onChange={(e) => setFloor(e.target.value)}
+                />
+                <label>Floor (optional)</label>
+              </div>
+
+              {addressType === "other" ? (
+                <div className="floating-input-wrap">
                   <input
                     type="text"
-                    className="add-address-custom-type"
-                    placeholder="Save as"
-                    value={customAddressType}
-                    onChange={(e) => setCustomAddressType(e.target.value)}
-                    autoFocus
+                    className="floating-input"
+                    placeholder=" "
+                    value={customArea}
+                    onChange={(e) => setCustomArea(e.target.value)}
                   />
-                  {customAddressType && (
+                  <label>Area / Sector / Locality *</label>
+                  {customArea && (
                     <span
-                      className="add-address-input-clear"
-                      onClick={() => setCustomAddressType("")}
+                      className="add-address-input-clear floating-clear"
+                      onClick={() => setCustomArea("")}
                     >
                       ×
                     </span>
                   )}
                 </div>
+              ) : (
+                <div className="floating-input-wrap">
+                  <input
+                    type="text"
+                    className="floating-input add-address-input-area"
+                    placeholder=" "
+                    value={area}
+                    onChange={(e) => setArea(e.target.value)}
+                  />
+                  <label>Area / Sector / Locality *</label>
+                </div>
               )}
-            </div>
 
-            <label className="add-address-label">Area / Sector / Locality *</label>
-            {addressType === "other" ? (
-              <div className="add-address-inline-input-wrap add-address-area-inline">
+              <div className="floating-input-wrap">
                 <input
                   type="text"
-                  className="add-address-custom-type add-address-area-input"
-                  placeholder="Area / Sector / Locality"
-                  value={customArea}
-                  onChange={(e) => setCustomArea(e.target.value)}
+                  className="floating-input"
+                  placeholder=" "
+                  value={landmark}
+                  onChange={(e) => setLandmark(e.target.value)}
                 />
-                {customArea && (
-                  <span
-                    className="add-address-input-clear"
-                    onClick={() => setCustomArea("")}
-                  >
-                    ×
-                  </span>
-                )}
+                <label>Nearby landmark (optional)</label>
               </div>
-            ) : (
-              <input
-                type="text"
-                className="add-address-input add-address-input-area"
-                placeholder="Area / Sector / Locality *"
-                value={area}
-                onChange={(e) => setArea(e.target.value)}
-              />
-            )}
 
-            <label className="add-address-label">Flat / House no / Building name *</label>
-            <input
-              type="text"
-              className="add-address-input"
-              placeholder="Flat / House no / Building name *"
-              value={flat}
-              onChange={(e) => setFlat(e.target.value)}
-              required
-            />
+              <p className="add-address-form-sub add-address-sub-light">
+                Enter your details for seamless delivery experience
+              </p>
 
-            <label className="add-address-label">Floor (optional)</label>
-            <input
-              type="text"
-              className="add-address-input"
-              placeholder="Floor (optional)"
-              value={floor}
-              onChange={(e) => setFloor(e.target.value)}
-            />
+              <div className="floating-input-wrap">
+                <input
+                  type="text"
+                  className="floating-input"
+                  placeholder=" "
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  required
+                />
+                <label>Your name *</label>
+              </div>
 
-            <label className="add-address-label">Nearby landmark (optional)</label>
-            <input
-              type="text"
-              className="add-address-input"
-              placeholder="Nearby landmark (optional)"
-              value={landmark}
-              onChange={(e) => setLandmark(e.target.value)}
-            />
+              <div className="floating-input-wrap">
+                <input
+                  type="tel"
+                  className="floating-input"
+                  placeholder=" "
+                  value={phone}
+                  onChange={(e) =>
+                    setPhone(e.target.value.replace(/\D/g, "").slice(0, 10))
+                  }
+                />
+                <label>Your phone number (optional)</label>
+              </div>
 
-            <p className="add-address-form-sub">Enter your details for seamless delivery experience</p>
+              {formError && <p className="add-address-form-err">{formError}</p>}
 
-            <label className="add-address-label">Your name *</label>
-            <input
-              type="text"
-              className="add-address-input"
-              placeholder="Your name *"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              required
-            />
-
-            <label className="add-address-label">Your phone number (optional)</label>
-            <input
-              type="tel"
-              className="add-address-input"
-              placeholder="Your phone number (optional)"
-              value={phone}
-              onChange={(e) => setPhone(e.target.value.replace(/\D/g, "").slice(0, 10))}
-            />
-
-            {formError && <p className="add-address-form-err">{formError}</p>}
-
-            <button type="button" className="add-address-save-btn" onClick={handleSave}>
-              Save Address
-            </button>
+              <button
+                type="button"
+                className="add-address-save-btn"
+                onClick={handleSave}
+              >
+                Save Address
+              </button>
             </div>
           </div>
         </div>

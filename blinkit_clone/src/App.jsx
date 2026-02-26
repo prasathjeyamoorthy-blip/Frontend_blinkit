@@ -209,6 +209,7 @@ function App() {
         setShowLoginModal={setShowLoginModal}
         setShowCart={setShowCart}
         cart={cart}
+        setCart={setCart}
         openCart={() => setShowCart(true)}
         cartCount={totalItems}
         cartTotal={totalPrice}
@@ -220,6 +221,7 @@ function App() {
         storeLat={nearestStore?.lat}
         storeLng={nearestStore?.lng}
         onLogoClick={navigateToHome}
+        setSelectedProductId={navigateToProduct}
       />
 
       {selectedCategory ? (

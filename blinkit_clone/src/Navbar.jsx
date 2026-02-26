@@ -22,6 +22,8 @@ const Navbar = ({
   storeLat,
   storeLng,
   onLogoClick,
+  setSelectedProductId,
+  setCart,
 }) => {
   const [open, setOpen] = useState(false);
   const [phone, setPhone] = useState("");
@@ -179,11 +181,11 @@ const Navbar = ({
           <h1
             className={`logo ${isSearchFocused ? "focused" : ""}`}
             onClick={onLogoClick}
-          > 
+          >
             <span className="blink">blink</span>
             <span className="it">it</span>
           </h1>
- 
+
           <div
             className={`divider-vertical ${isSearchFocused ? "focused" : ""}`}
           ></div>
@@ -390,7 +392,13 @@ const Navbar = ({
                         className="search-list-item"
                         onMouseDown={(e) => {
                           e.preventDefault();
-                          setSearchValue(product.title);
+                          if (setSelectedProductId) {
+                            setSelectedProductId(product.id);
+                            setSearchValue("");
+                            setIsSearchFocused(false);
+                          } else {
+                            setSearchValue(product.title);
+                          }
                         }}
                       >
                         <div className="search-list-image-container">
@@ -426,7 +434,17 @@ const Navbar = ({
                   </h3>
                   <div className="search-products-grid">
                     {filteredProducts.map((product) => (
-                      <div key={`grid-${product.id}`} className="product-card">
+                      <div
+                        key={`grid-${product.id}`}
+                        className="product-card"
+                        onClick={() => {
+                          if (setSelectedProductId) {
+                            setSelectedProductId(product.id);
+                            setSearchValue("");
+                            setIsSearchFocused(false);
+                          }
+                        }}
+                      >
                         <div className="product-image-container">
                           <img
                             src={product.image}
@@ -449,7 +467,12 @@ const Navbar = ({
                             className="add-btn"
                             onClick={(e) => {
                               e.stopPropagation();
-                              /* Handle add to cart */
+                              if (setCart) {
+                                setCart((prev) => ({
+                                  ...prev,
+                                  [product.id]: (prev[product.id] || 0) + 1,
+                                }));
+                              }
                             }}
                           >
                             ADD

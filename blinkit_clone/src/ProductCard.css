@@ -42,6 +42,8 @@
   justify-content: space-between;
   align-items: center;
   margin-top: 10px;
+  height: 36px;
+  min-height: 36px;
 }
 
 .price {
@@ -53,12 +55,14 @@
   background: #ffffff;
   color: #0c831f;
   border: 1px solid #0c831f;
-  padding: 6px 16px;
+  padding: 0 16px;
   border-radius: 8px;
   font-weight: 600;
   cursor: pointer;
-  width: 80px;
-  height: 35px;
+  min-width: 80px;
+  height: 36px;
+  box-sizing: border-box;
+  margin: 0;
 }
 .disabled-btn {
   opacity: 0.6;
@@ -71,22 +75,36 @@
 .counter {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   background: #0c831f;
   color: white;
   border-radius: 8px;
-  overflow: hidden;
+  min-width: 80px;
+  height: 36px;
+  box-sizing: border-box;
+  margin: 0;
 }
 
 .counter button {
+  width: 28px;
   background: transparent;
   border: none;
   color: white;
-  padding: 6px 10px;
+  padding: 0;
   cursor: pointer;
-  font-size: 16px;
+  font-size: 18px;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
 }
 
 .counter span {
-  padding: 0 10px;
+  flex: 1;
+  text-align: center;
+  padding: 0;
   font-weight: 600;
+  font-size: 14px;
+  white-space: nowrap;
 }

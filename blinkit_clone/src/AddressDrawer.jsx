@@ -1,12 +1,13 @@
 import React, { useState, useEffect, useCallback } from "react";
 import "./AddressDrawer.css";
 import AddAddressForm from "./AddAddressForm";
-import { FiMapPin } from "react-icons/fi";
+import { FiMapPin, FiHome, FiEdit2, FiBriefcase } from "react-icons/fi";
 
 const STORAGE_KEY = "blinkitSavedAddresses";
 
 const AddressDrawer = ({ closeAddress }) => {
   const [showAddForm, setShowAddForm] = useState(false);
+  const [editingAddress, setEditingAddress] = useState(null);
   const [savedAddresses, setSavedAddresses] = useState(() => {
     try {
       const s = localStorage.getItem(STORAGE_KEY);
@@ -22,10 +23,24 @@ const AddressDrawer = ({ closeAddress }) => {
   }, [savedAddresses]);
 
   const handleSaveAddress = useCallback((address) => {
-    setSavedAddresses((prev) => [...prev, address]);
+    setSavedAddresses((prev) => {
+      const exists = prev.find((a) => a.id === address.id);
+      if (exists) {
+        return prev.map((a) => (a.id === address.id ? address : a));
+      }
+      return [...prev, address];
+    });
   }, []);
 
-  const handleCloseForm = useCallback(() => setShowAddForm(false), []);
+  const handleCloseForm = useCallback(() => {
+    setShowAddForm(false);
+    setEditingAddress(null);
+  }, []);
+
+  const handleEditAddress = (addr) => {
+    setEditingAddress(addr);
+    setShowAddForm(true);
+  };
 
   return (
     <div className="address-drawer">
@@ -48,15 +63,38 @@ const AddressDrawer = ({ closeAddress }) => {
         <div className="saved-addresses-list">
           {savedAddresses.map((addr) => (
             <div key={addr.id} className="address-card">
-              <div className="address-icon">
-                <FiMapPin size={22} color="#16a34a" />
+              <div className="address-icon-wrapper">
+                {addr.type && addr.type.toLowerCase() === "home" ? (
+                  <div className="icon-bg home-bg">
+                    <FiHome size={20} color="#ca8a04" />
+                  </div>
+                ) : addr.type && addr.type.toLowerCase() === "work" ? (
+                  <div className="icon-bg work-bg">
+                    <FiBriefcase size={20} color="#2563eb" />
+                  </div>
+                ) : (
+                  <div className="icon-bg other-bg">
+                    <FiMapPin size={20} color="#16a34a" />
+                  </div>
+                )}
               </div>
-              <div className="address-info">
-                <h4>
-                  {addr.flat}
-                  {addr.floor ? `, Floor ${addr.floor}` : ""} · {addr.type}
-                </h4>
-                <p>{addr.area}</p>
+              <div className="address-info-wrapper">
+                <div className="address-info">
+                  <h4>{addr.type || "Other"}</h4>
+                  <p>
+                    {addr.flat ? `${addr.flat}, ` : ""}
+                    {addr.floor ? `Floor ${addr.floor}, ` : ""}
+                    {addr.area}
+                  </p>
+                </div>
+                <div className="address-actions">
+                  <button
+                    className="edit-btn"
+                    onClick={() => handleEditAddress(addr)}
+                  >
+                    <FiEdit2 size={14} color="#16a34a" />
+                  </button>
+                </div>
               </div>
             </div>
           ))}
@@ -69,6 +107,7 @@ const AddressDrawer = ({ closeAddress }) => {
         <AddAddressForm
           onSave={handleSaveAddress}
           onClose={handleCloseForm}
+          initialData={editingAddress}
         />
       )}
     </div>
