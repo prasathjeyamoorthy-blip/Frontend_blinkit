@@ -42,6 +42,14 @@ const AddressDrawer = ({ closeAddress }) => {
     setShowAddForm(true);
   };
 
+  const handleSelectAddress = (addr) => {
+    try {
+      localStorage.setItem("blinkitSelectedAddress", JSON.stringify(addr));
+      window.dispatchEvent(new Event("addressUpdated"));
+    } catch (_) {}
+    closeAddress();
+  };
+
   return (
     <div className="address-drawer">
       {/* Header */}
@@ -62,7 +70,12 @@ const AddressDrawer = ({ closeAddress }) => {
       {savedAddresses.length > 0 ? (
         <div className="saved-addresses-list">
           {savedAddresses.map((addr) => (
-            <div key={addr.id} className="address-card">
+            <div
+              key={addr.id}
+              className="address-card"
+              onClick={() => handleSelectAddress(addr)}
+              style={{ cursor: "pointer" }}
+            >
               <div className="address-icon-wrapper">
                 {addr.type && addr.type.toLowerCase() === "home" ? (
                   <div className="icon-bg home-bg">
@@ -90,7 +103,10 @@ const AddressDrawer = ({ closeAddress }) => {
                 <div className="address-actions">
                   <button
                     className="edit-btn"
-                    onClick={() => handleEditAddress(addr)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleEditAddress(addr);
+                    }}
                   >
                     <FiEdit2 size={14} color="#16a34a" />
                   </button>

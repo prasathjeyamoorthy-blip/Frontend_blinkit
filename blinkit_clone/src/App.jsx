@@ -8,6 +8,7 @@ import CartDrawer from "./CartDrawer.jsx";
 import Footer from "./Footer";
 import AddressDrawer from "./AddressDrawer";
 import ProductDetails from "./ProductDetails";
+import Checkout from "./Checkout";
 import CategoryPage, { PRODUCTS_BY_CATEGORY } from "./CategoryPage";
 import PharmaPage from "./PharmaPage";
 import { PHARMA_PRODUCTS_BY_CATEGORY } from "./pharma_data_loc.jsx";
@@ -101,14 +102,21 @@ function App() {
     return params.get("category") || null;
   });
 
+  const [showCheckout, setShowCheckout] = useState(() => {
+    const params = new URLSearchParams(window.location.search);
+    return params.get("checkout") === "true";
+  });
+
   // Handle browser back/forward buttons
   useEffect(() => {
     const handlePopState = () => {
       const params = new URLSearchParams(window.location.search);
       const id = params.get("productId");
       const cat = params.get("category");
+      const checkout = params.get("checkout") === "true";
       setSelectedProductId(id ? parseInt(id, 10) : null);
       setSelectedCategory(cat || null);
+      setShowCheckout(checkout);
     };
 
     window.addEventListener("popstate", handlePopState);
@@ -119,18 +127,29 @@ function App() {
     window.history.pushState({}, "", `?productId=${id}`);
     setSelectedProductId(id);
     setSelectedCategory(null);
+    setShowCheckout(false);
   };
 
   const navigateToCategory = (cat) => {
     window.history.pushState({}, "", `?category=${cat}`);
     setSelectedCategory(cat);
     setSelectedProductId(null);
+    setShowCheckout(false);
   };
 
   const navigateToHome = () => {
     window.history.pushState({}, "", "/");
     setSelectedProductId(null);
     setSelectedCategory(null);
+    setShowCheckout(false);
+  };
+
+  const navigateToCheckout = () => {
+    window.history.pushState({}, "", `?checkout=true`);
+    setShowCheckout(true);
+    setSelectedProductId(null);
+    setSelectedCategory(null);
+    setShowCart(false); // close drawer right away
   };
 
   // User location & delivery time (updated when user clicks "Detect my location")
@@ -202,127 +221,137 @@ function App() {
 
   return (
     <>
-      <Navbar
-        isLoggedIn={isLoggedIn}
-        setIsLoggedIn={setIsLoggedIn}
-        showLoginModal={showLoginModal}
-        setShowLoginModal={setShowLoginModal}
-        setShowCart={setShowCart}
-        cart={cart}
-        setCart={setCart}
-        openCart={() => setShowCart(true)}
-        cartCount={totalItems}
-        cartTotal={totalPrice}
-        deliveryDisplay={deliveryDisplay}
-        onLocationUpdate={onLocationUpdate}
-        getDeliveryInfoForCoords={getDeliveryInfoForCoords}
-        userLocation={userLocation}
-        deliveryAvailable={deliveryAvailable}
-        storeLat={nearestStore?.lat}
-        storeLng={nearestStore?.lng}
-        onLogoClick={navigateToHome}
-        setSelectedProductId={navigateToProduct}
-      />
-
-      {selectedCategory ? (
-        [
-          "adult-diapers",
-          "health-wellness",
-          "protein-workout",
-          "antiseptic",
-        ].includes(selectedCategory) ? (
-          <PharmaPage
-            catId={selectedCategory}
-            cart={cart}
-            setCart={setCart}
-            setSelectedProductId={navigateToProduct}
-            deliveryDisplay={deliveryDisplay}
-          />
-        ) : [
-            "accessories",
-            "cat-needs",
-            "diverse",
-            "dog-needs",
-            "pet-grooming",
-          ].includes(selectedCategory) ? (
-          <PetCarePage
-            catId={selectedCategory}
-            cart={cart}
-            setCart={setCart}
-            setSelectedProductId={navigateToProduct}
-            deliveryDisplay={deliveryDisplay}
-          />
-        ) : [
-            "diapers-more",
-            "bathing-needs",
-            "baby-wipes",
-            "baby-food",
-            "skin-hair-care",
-          ].includes(selectedCategory) ? (
-          <BabyCarePage
-            catId={selectedCategory}
-            cart={cart}
-            setCart={setCart}
-            setSelectedProductId={navigateToProduct}
-            deliveryDisplay={deliveryDisplay}
-          />
-        ) : (
-          <CategoryPage
-            catId={selectedCategory}
-            cart={cart}
-            setCart={setCart}
-            setSelectedProductId={navigateToProduct}
-            deliveryDisplay={deliveryDisplay}
-          />
-        )
-      ) : selectedProductId ? (
-        <ProductDetails
-          productId={selectedProductId}
-          goBack={navigateToHome}
-          cart={cart}
-          setCart={setCart}
-          isLoggedIn={isLoggedIn}
-          setShowLoginModal={setShowLoginModal}
-          deliveryDisplay={deliveryDisplay}
-          navigateToProduct={navigateToProduct}
-          allProducts={allProducts}
-        />
+      {showCheckout ? (
+        <Checkout cart={cart} products={allProducts} goBack={navigateToHome} />
       ) : (
         <>
-          <Hero onShopNow={() => navigateToCategory("fresh-vegetables")} />
-          <PromoSection navigateToCategory={navigateToCategory} />
-          <CategoryGrid />
-
-          <ProductSection
+          <Navbar
+            isLoggedIn={isLoggedIn}
+            setIsLoggedIn={setIsLoggedIn}
+            showLoginModal={showLoginModal}
+            setShowLoginModal={setShowLoginModal}
+            setShowCart={setShowCart}
             cart={cart}
             setCart={setCart}
-            isLoggedIn={isLoggedIn}
-            setShowLogin={setShowLogin}
+            openCart={() => setShowCart(true)}
+            cartCount={totalItems}
+            cartTotal={totalPrice}
             deliveryDisplay={deliveryDisplay}
+            onLocationUpdate={onLocationUpdate}
+            getDeliveryInfoForCoords={getDeliveryInfoForCoords}
+            userLocation={userLocation}
+            deliveryAvailable={deliveryAvailable}
+            storeLat={nearestStore?.lat}
+            storeLng={nearestStore?.lng}
+            onLogoClick={navigateToHome}
             setSelectedProductId={navigateToProduct}
           />
-        </>
-      )}
 
-      {showCart && (
-        <>
-          <div className="cart-backdrop" onClick={() => setShowCart(false)} />
+          {selectedCategory ? (
+            [
+              "adult-diapers",
+              "health-wellness",
+              "protein-workout",
+              "antiseptic",
+            ].includes(selectedCategory) ? (
+              <PharmaPage
+                catId={selectedCategory}
+                cart={cart}
+                setCart={setCart}
+                setSelectedProductId={navigateToProduct}
+                deliveryDisplay={deliveryDisplay}
+              />
+            ) : [
+                "accessories",
+                "cat-needs",
+                "diverse",
+                "dog-needs",
+                "pet-grooming",
+              ].includes(selectedCategory) ? (
+              <PetCarePage
+                catId={selectedCategory}
+                cart={cart}
+                setCart={setCart}
+                setSelectedProductId={navigateToProduct}
+                deliveryDisplay={deliveryDisplay}
+              />
+            ) : [
+                "diapers-more",
+                "bathing-needs",
+                "baby-wipes",
+                "baby-food",
+                "skin-hair-care",
+              ].includes(selectedCategory) ? (
+              <BabyCarePage
+                catId={selectedCategory}
+                cart={cart}
+                setCart={setCart}
+                setSelectedProductId={navigateToProduct}
+                deliveryDisplay={deliveryDisplay}
+              />
+            ) : (
+              <CategoryPage
+                catId={selectedCategory}
+                cart={cart}
+                setCart={setCart}
+                setSelectedProductId={navigateToProduct}
+                deliveryDisplay={deliveryDisplay}
+              />
+            )
+          ) : selectedProductId ? (
+            <ProductDetails
+              productId={selectedProductId}
+              goBack={navigateToHome}
+              cart={cart}
+              setCart={setCart}
+              isLoggedIn={isLoggedIn}
+              setShowLoginModal={setShowLoginModal}
+              deliveryDisplay={deliveryDisplay}
+              navigateToProduct={navigateToProduct}
+              allProducts={allProducts}
+            />
+          ) : (
+            <>
+              <Hero onShopNow={() => navigateToCategory("fresh-vegetables")} />
+              <PromoSection navigateToCategory={navigateToCategory} />
+              <CategoryGrid />
 
-          <CartDrawer
-            cart={cart}
-            products={allProducts}
-            setCart={setCart}
-            closeCart={() => setShowCart(false)}
-            openAddress={() => setShowAddress(true)}
-            deliveryDisplay={deliveryDisplay}
-          />
-          {showAddress && (
-            <AddressDrawer closeAddress={() => setShowAddress(false)} />
+              <ProductSection
+                cart={cart}
+                setCart={setCart}
+                isLoggedIn={isLoggedIn}
+                setShowLogin={setShowLogin}
+                deliveryDisplay={deliveryDisplay}
+                setSelectedProductId={navigateToProduct}
+              />
+            </>
           )}
+
+          {showCart && (
+            <>
+              <div
+                className="cart-backdrop"
+                onClick={() => setShowCart(false)}
+              />
+
+              <CartDrawer
+                cart={cart}
+                products={allProducts}
+                setCart={setCart}
+                closeCart={() => setShowCart(false)}
+                openAddress={() => setShowAddress(true)}
+                deliveryDisplay={deliveryDisplay}
+                onCheckout={navigateToCheckout}
+              />
+              {showAddress && (
+                <AddressDrawer closeAddress={() => setShowAddress(false)} />
+              )}
+            </>
+          )}
+
+          <Footer />
         </>
       )}
-
-      <Footer />
     </>
   );
 }

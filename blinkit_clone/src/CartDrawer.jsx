@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "./CartDrawer.css";
-import { FiFileText, FiTruck, FiInfo, FiUser } from "react-icons/fi";
+import { FiFileText, FiTruck, FiInfo, FiUser, FiMapPin } from "react-icons/fi";
 
 const CartDrawer = ({
   cart,
@@ -9,6 +9,7 @@ const CartDrawer = ({
   closeCart,
   openAddress,
   deliveryDisplay = "18 minutes",
+  onCheckout,
 }) => {
   const tipOptions = [
     { amount: 20, image: "/20_tip.webp" },
@@ -21,6 +22,47 @@ const CartDrawer = ({
   const [donation, setDonation] = useState(false);
   const [showCustom, setShowCustom] = useState(false);
   const [customValue, setCustomValue] = useState("");
+
+  const [savedAddresses, setSavedAddresses] = useState(() => {
+    try {
+      const s = localStorage.getItem("blinkitSavedAddresses");
+      if (s) return JSON.parse(s);
+    } catch (_) {}
+    return [];
+  });
+
+  const [selectedAddress, setSelectedAddress] = useState(null);
+
+  // Re-read storage if cart drawer is re-opened or address is added/edited
+  useEffect(() => {
+    const handleStorageChange = () => {
+      try {
+        const s = localStorage.getItem("blinkitSavedAddresses");
+        const savedAddrs = s ? JSON.parse(s) : [];
+        setSavedAddresses(savedAddrs);
+
+        const sel = localStorage.getItem("blinkitSelectedAddress");
+        if (sel) {
+          setSelectedAddress(JSON.parse(sel));
+        } else if (savedAddrs.length > 0) {
+          setSelectedAddress(savedAddrs[0]);
+        } else {
+          setSelectedAddress(null);
+        }
+      } catch (_) {}
+    };
+
+    // Periodically sync internal state or listen for storage changes
+    window.addEventListener("storage", handleStorageChange);
+    window.addEventListener("addressUpdated", handleStorageChange);
+    // Also check on mount/render just in case it changed in the same tab
+    handleStorageChange();
+
+    return () => {
+      window.removeEventListener("storage", handleStorageChange);
+      window.removeEventListener("addressUpdated", handleStorageChange);
+    };
+  }, [cart]); // small hack, check when cart updates or periodically
 
   const cartItems = products.filter((p) => cart[p.id]);
 
@@ -88,9 +130,11 @@ const CartDrawer = ({
 
         {/* Delivery Card */}
         <div className="delivery-card">
-          <div className="delivery-icon">⏱</div>
+          <div className="delivery-icon" style={{ padding: "20px" }}>
+            ⏱
+          </div>
           <div>
-            <h4>Delivery in {deliveryDisplay}</h4>
+            <p style={{ fontSize: "5px" }}>Delivery in {deliveryDisplay}</p>
             <p>Shipment of {totalItems} items</p>
           </div>
         </div>
@@ -303,14 +347,38 @@ const CartDrawer = ({
 
       {/* Sticky Bottom */}
       <div className="bottom-bar">
-        <button className="proceed-btn" onClick={openAddress}>
+        <div className="delivery-address-container">
+          <div className="delivery-address-left">
+            <div className="delivery-pin-wrapper">
+              <FiMapPin size={22} className="delivery-pin-icon" />
+            </div>
+            <div className="delivery-address-details">
+              <h4>
+                Delivering to{" "}
+                {selectedAddress && selectedAddress.type
+                  ? selectedAddress.type
+                  : "Home"}
+              </h4>
+              <p className="delivery-address-text">
+                {selectedAddress
+                  ? `${selectedAddress.flat ? selectedAddress.flat + ", " : ""}${selectedAddress.area}`
+                  : "deva, 12, dubai kuruku santhu..."}
+              </p>
+            </div>
+          </div>
+          <a className="change-btn" onClick={openAddress}>
+            Change
+          </a>
+        </div>
+
+        <button className="proceed-btn" onClick={onCheckout}>
           <div className="total-section">
             <span className="total-amount">₹{grandTotal}</span>
             <span className="total-label">TOTAL</span>
           </div>
 
           <div className="proceed-text">
-            Proceed <span className="arrow">›</span>
+            Proceed To Pay <span className="arrow">›</span>
           </div>
         </button>
       </div>
