@@ -562,6 +562,55 @@
   background: transparent;
 }
 
+/* Responsive: keep checkout usable on phones */
+@media (max-width: 900px) {
+  .checkout-container {
+    max-width: 100%;
+    margin: 24px auto;
+    flex-direction: column;
+  }
+
+  .checkout-right {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .checkout-header {
+    padding: 14px 16px;
+  }
+
+  .checkout-logo {
+    font-size: 34px;
+  }
+
+  .payment-method-header {
+    padding: 16px 16px;
+  }
+
+  .payment-method-body {
+    padding: 0 16px 16px 16px;
+  }
+
+  .bank-grid {
+    flex-wrap: wrap;
+  }
+
+  .bank-card {
+    min-width: calc(50% - 6px);
+    flex: initial;
+  }
+
+  .upi-apps-row {
+    flex-wrap: wrap;
+    row-gap: 10px;
+  }
+
+  .qr-container {
+    max-width: 100%;
+  }
+}
+
 .checkout-address-block {
   padding: 20px;
   border: 1px solid #e5e7eb;

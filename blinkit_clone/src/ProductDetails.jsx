@@ -1,7 +1,24 @@
 import { useEffect, useState, useMemo } from "react";
 import "./ProductDetails.css";
-import { products } from "./data/products";
 import ProductCard from "./ProductCard";
+
+function hashStringToSeed(input) {
+  let h = 2166136261;
+  for (let i = 0; i < input.length; i++) {
+    h ^= input.charCodeAt(i);
+    h = Math.imul(h, 16777619);
+  }
+  return h >>> 0;
+}
+
+function mulberry32(seed) {
+  return function () {
+    let t = (seed += 0x6d2b79f5);
+    t = Math.imul(t ^ (t >>> 15), t | 1);
+    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
 
 const generateExpirySvg = (product) => {
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="400" height="400">
@@ -112,14 +129,14 @@ const ProductDetails = ({
     if (foundProduct) {
       setActiveImage(foundProduct.image);
     }
-  }, [productId]);
+  }, [productId, allProducts]);
 
   const categoryProducts = useMemo(() => {
     if (!product) return [];
     return allProducts.filter(
       (p) => p.category === product.category && p.id !== product.id,
     );
-  }, [allProducts, product?.category, product?.id]);
+  }, [allProducts, product]);
 
   const similarProducts = useMemo(() => {
     return categoryProducts.slice(0, 6);
@@ -132,20 +149,19 @@ const ProductDetails = ({
       remainingCategoryProducts.length > 0
         ? remainingCategoryProducts
         : categoryProducts;
-
-    return poolForAlsoBought
-      .slice()
-      .sort(() => 0.5 - Math.random())
-      .slice(0, 6);
-  }, [categoryProducts]);
+    const seed = hashStringToSeed(`${productId}:${product?.category || ""}`);
+    const rand = mulberry32(seed);
+    const shuffled = poolForAlsoBought.slice();
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(rand() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled.slice(0, 6);
+  }, [categoryProducts, productId, product]);
 
   if (!product) return <div className="loading-product">Loading...</div>;
 
   const count = cart[product.id] || 0;
-  const deliveryText = deliveryDisplay
-    ? `${(deliveryDisplay.replace(/\D/g, "") || "8").trim() || "8"} MINS`
-    : product.delivery;
-
   const addItem = () => {
     setCart((prev) => ({
       ...prev,

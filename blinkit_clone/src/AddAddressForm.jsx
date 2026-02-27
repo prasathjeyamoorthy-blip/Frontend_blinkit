@@ -124,7 +124,6 @@ export default function AddAddressForm({
   initialData = null,
 }) {
   const [searchQuery, setSearchQuery] = useState("");
-  const [searching, setSearching] = useState(false);
   const [searchError, setSearchError] = useState(null);
   const [selectedLocation, setSelectedLocation] = useState(
     initialData
@@ -175,7 +174,6 @@ export default function AddAddressForm({
     const q = searchQuery.trim();
     if (!q) return;
     setSearchError(null);
-    setSearching(true);
     try {
       const res = await fetch(
         `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(q)}&format=json&limit=1`,
@@ -199,8 +197,6 @@ export default function AddAddressForm({
       });
     } catch {
       setSearchError("Search failed");
-    } finally {
-      setSearching(false);
     }
   }, [searchQuery]);
 
@@ -222,7 +218,7 @@ export default function AddAddressForm({
           );
           const data = await res.json();
           address = data.display_name || address;
-        } catch (_) {}
+        } catch {}
         setSelectedLocation({ lat, lng, address });
         setSearchQuery(address.slice(0, 80));
         setGoingToCurrent(false);

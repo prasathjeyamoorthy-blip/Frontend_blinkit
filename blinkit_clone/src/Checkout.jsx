@@ -5,7 +5,6 @@ import {
   FiChevronUp,
   FiCheckCircle,
   FiSearch,
-  FiCheck,
 } from "react-icons/fi";
 
 const Checkout = ({ cart, products, goBack }) => {
@@ -25,15 +24,10 @@ const Checkout = ({ cart, products, goBack }) => {
           }
         }
       }
-    } catch (_) {}
+    } catch {}
   }, []);
 
   const cartItems = products.filter((p) => cart[p.id]);
-
-  const itemsTotal = cartItems.reduce(
-    (sum, item) => sum + item.price * cart[item.id],
-    0,
-  );
 
   const totalItems = Object.values(cart).reduce((sum, qty) => sum + qty, 0);
 
